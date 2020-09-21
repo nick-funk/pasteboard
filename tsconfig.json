@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+      "module": "commonjs",
+      "esModuleInterop": true,
+      "target": "es6",
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "outDir": "dist",
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "baseUrl": "./src",
+      "paths": {
+        "data/*": [ "data/*" ],
+        "domain/*": [ "domain/*" ],
+      }
+    },
+    "lib": ["es2015"]
+  }
