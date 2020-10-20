@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 import { MongoClient, Db } from "mongodb"
 
-import { EnvironmentVariables } from "domain/environment";
+import { EnvironmentVariables } from "../domain/environment";
 
 @injectable()
 export class DbInstance {
@@ -15,6 +15,10 @@ export class DbInstance {
     public async initialize() {
         const result = await MongoClient.connect(this.variables.MongoUrl);
         this.db = result.db(this.variables.MongoDataDbName);
+    }
+
+    public collection(name: string) {
+        return this.db.collection(name);
     }
 
     public instance() {
