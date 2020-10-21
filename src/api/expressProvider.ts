@@ -1,6 +1,8 @@
-import { EnvironmentVariables } from "../domain/environment";
+import bodyParser from "body-parser";
 import express from "express";
 import { injectable } from "tsyringe";
+
+import { EnvironmentVariables } from "../domain/environment";
 
 @injectable()
 export default class ExpressProvider {
@@ -11,6 +13,7 @@ export default class ExpressProvider {
         this.env = env;
 
         this.exp = express();
+        this.exp.use(bodyParser.json());
     }
 
     public instance () {

@@ -1,7 +1,8 @@
 import express from "express";
+import { injectable } from "tsyringe";
+import { v4 as uuid } from "uuid";
 
 import CreateBoardCommand from "../domain/commands/createBoard";
-import { injectable } from "tsyringe";
 import ExpressProvider from "./expressProvider";
 import { Controller } from "./controller";
 
@@ -16,13 +17,29 @@ export default class BoardController implements Controller {
     }
 
     public initialize() {
-        this.api.post("/createBoard", (req, res) => {
-            this.createBoard.execute({
-                id: "test",
-                name: "test"
-            });
+        this.api.post("/board/create", async (req, res) => {
+            try {
+                const name = req.body.name;
+                const now = new Date();
 
-            res.sendStatus(200);
+                if (!name) {
+                    res.status(400);
+                    res.send("must provide a name for the board");
+                    return;
+                }
+
+                const board = await this.createBoard.execute({
+                    id: uuid(),
+                    name: name,
+                    createdAt: now,
+                });
+
+                res.status(200);
+                res.send(board);
+            } catch (err) {
+                console.log(err);
+                res.sendStatus(500);
+            }
         });
     }
 }

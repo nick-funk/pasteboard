@@ -10,9 +10,25 @@ export default class CreateBoardCommand {
         this.db = db;
     }
 
-    public execute(board: Board) {
+    public async execute(board: Board) {
         const boards = this.db.collection("boards");
 
-        boards.insertOne(board);
+        const existing = await boards.findOne({ 
+            $or: [
+                { id: { $eq: board.id } },
+                { name: { $eq: board.name  } }
+            ]
+        });
+
+        if (existing) {
+            throw new Error("board with name or id already exists");
+        }
+
+        const result = (await boards.insertOne(board)).result;
+        if (!result.ok) {
+            throw new Error("failed to create new board");
+        }
+
+        return board;
     }
 }
