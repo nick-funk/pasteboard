@@ -11,16 +11,16 @@ export default class GetPostsForBoardQuery {
         this.db = db;
     }
 
-    public async query(boardId: string, count: number = 10, after?: Date) {
+    public async query(boardId: string, count: number = 10, before?: Date) {
         const posts = this.db.collection("posts");
 
-        const query = after ? 
-            { boardId, createdAt: { $gt: after } } :
+        const query = before ? 
+            { boardId, createdAt: { $lt: before } } :
             { boardId }
 
         const items = 
             await posts.find(query)
-                .sort({ createdAt: 1 })
+                .sort({ createdAt: -1 })
                 .limit(count)
                 .toArray();
 
