@@ -13,6 +13,7 @@ import CreateBoardCommand from "./domain/commands/createBoard";
 import CreatePostCommand from "./domain/commands/createPost";
 import ControllerSet from "./api/controllerSet";
 import GetPostsForBoardQuery from "./domain/queries/getPostsForBoard";
+import StaticController from "./api/staticController";
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ const run = async () => {
     // API
     container.registerSingleton<ExpressProvider>(ExpressProvider);
 
+    container.registerSingleton<StaticController>(StaticController);
     container.registerSingleton<BoardController>(BoardController);
     container.registerSingleton<PostController>(PostController);
     container.registerSingleton<ControllerSet>(ControllerSet);

@@ -17,7 +17,7 @@ export default class BoardController implements Controller {
     }
 
     public initialize() {
-        this.api.post("/board/create", async (req, res) => {
+        this.api.post("api/board/create", async (req, res) => {
             try {
                 const name = req.body.name;
                 const now = new Date();

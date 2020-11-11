@@ -3,6 +3,7 @@ import { injectable } from "tsyringe";
 import BoardController from "./boardController";
 import { Controller } from "./controller";
 import PostController from "./postController";
+import StaticController from "./staticController";
 
 @injectable()
 export default class ControllerSet {
@@ -11,8 +12,10 @@ export default class ControllerSet {
     constructor(
         boardController: BoardController,
         postController: PostController,
+        staticController: StaticController,
     ) {
         this.controllers = [
+            staticController,
             boardController,
             postController,
         ];
