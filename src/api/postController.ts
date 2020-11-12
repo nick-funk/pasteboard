@@ -24,7 +24,7 @@ export default class PostController implements Controller {
     }
 
     public initialize() {
-        this.api.post("api/post/create", async (req, res) => {
+        this.api.post("/api/post/create", async (req, res) => {
             try {
                 const body = req.body.body;
                 const boardId = req.body.boardId;
@@ -56,7 +56,7 @@ export default class PostController implements Controller {
             }
         });
 
-        this.api.get("api/posts", async (req, res) => {
+        this.api.get("/api/posts", async (req, res) => {
             try {
                 const boardId = req.body.boardId;
                 const before = req.body.before ? new Date(req.body.before) : undefined;
