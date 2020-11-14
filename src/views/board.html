@@ -4,8 +4,13 @@
         <script type="text/javascript" src="/static/board/board.js"></script>
     </head>
     <body>
-        <div>{{ id }}</div>
-        <ul>
+        <form action="javascript:submit()">
+            <input type="hidden" id="boardIdField" name="boardId" value="{{ id }}" />
+            <textarea name="body" id="bodyField"></textarea>
+            <input type="submit" value="Post" />
+            <div id="message"></div>
+        </form>
+        <ul id="posts">
             {% for post in posts %}
                 <li>{{ post.body }}</li>
             {% else %}

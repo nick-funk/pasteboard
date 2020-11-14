@@ -2,6 +2,12 @@ import { DbInstance } from "../../data/db";
 import Board from "../models/board";
 import { injectable } from "tsyringe";
 
+export class CreateBoardResult {
+    ok: boolean;
+    message: string;
+    board?: Board;
+}
+
 @injectable()
 export default class CreateBoardCommand {
     private db: DbInstance;
@@ -10,7 +16,7 @@ export default class CreateBoardCommand {
         this.db = db;
     }
 
-    public async execute(board: Board) {
+    public async execute(board: Board): Promise<CreateBoardResult> {
         const boards = this.db.collection("boards");
 
         const existing = await boards.findOne({ 
@@ -21,14 +27,24 @@ export default class CreateBoardCommand {
         });
 
         if (existing) {
-            throw new Error("board with name or id already exists");
+            return {
+                ok: false,
+                message: "board with name or id already exists"
+            };
         }
 
         const result = (await boards.insertOne(board)).result;
         if (!result.ok) {
-            throw new Error("failed to create new board");
+            return {
+                ok: false,
+                message: "failed to create new board"
+            };
         }
 
-        return board;
+        return {
+            ok: true,
+            message: "successfully created new board",
+            board
+        };
     }
 }

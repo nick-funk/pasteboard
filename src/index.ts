@@ -14,6 +14,7 @@ import CreatePostCommand from "./domain/commands/createPost";
 import ControllerSet from "./api/controllerSet";
 import GetPostsForBoardQuery from "./domain/queries/getPostsForBoard";
 import StaticController from "./api/staticController";
+import GetBoardsQuery from "./domain/queries/getBoards";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ const run = async () => {
     container.registerSingleton<CreatePostCommand>(CreatePostCommand);
 
     container.registerSingleton<GetPostsForBoardQuery>(GetPostsForBoardQuery);
+    container.registerSingleton<GetBoardsQuery>(GetBoardsQuery);
 
     // Data
     const db = new DbInstance(container.resolve(EnvironmentVariables));

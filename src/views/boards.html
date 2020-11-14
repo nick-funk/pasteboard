@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <script type="text/javascript" src="/static/shared/jQuery-3.5.1.min.js"></script>
+        <script type="text/javascript" src="/static/boards/boards.js"></script>
+    </head>
+    <body>
+        <h2>Boards</h2>
+        <form action="javascript:submit()">
+            <input type="text" name="name" id="nameField" />
+            <input type="submit" value="Create" />
+            <div id="message"></div>
+        </form>
+        <ul id="boards">
+            {% for board in boards %}
+                <li><a href="/board/{{ board.id }}">{{ board.name }}</a></li>
+            {% else %}
+                <li> No boards found </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>

@@ -1,10 +1,10 @@
-function insertPost(body) {
-    var posts = $("#posts");
-    if (!posts) {
+function insertBoard(board) {
+    var boards = $("#boards");
+    if (!boards) {
         return;
     }
 
-    posts.prepend("<li>" + body + "</li>");
+    boards.prepend("<li><a href=\"/board/" + board.id + "\">" + board.name + "</a></li>");
 }
 
 function showMessage(message, classNames) {
@@ -19,25 +19,22 @@ function showMessage(message, classNames) {
 }
 
 function submit() {
-    var boardId = $("#boardIdField").val();
-    var body = $("#bodyField").val();
-
-    if (!boardId || !body) {
+    var name = $("#nameField").val();
+    if (!name) {
         return;
     }
 
     $.ajax({
         type: "POST",
-        url: "/api/post/create",
+        url: "/api/board/create",
         data: JSON.stringify({
-            boardId: boardId,
-            body: body
+            name: name
         }),
         dataType: "json",
         contentType: "application/json",
         success: function(data) {
             try {
-                insertPost(data.body);
+                insertBoard(data);
             } catch {
                 showMessage("unknown response received", ["message-error"]);
             }

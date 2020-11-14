@@ -32,24 +32,30 @@ export default class PostController implements Controller {
 
                 if (!body) {
                     res.status(400);
-                    res.send("must provide a body for the post");
+                    res.send({ message: "must provide a body for the post" });
                     return;
                 }
                 if (!boardId) {
                     res.status(400);
-                    res.send("must provide a boardId for the post");
+                    res.send({ message: "must provide a boardId for the post" });
                     return;
                 }
 
-                const post = await this.createPost.execute({
+                const result = await this.createPost.execute({
                     id: uuid(),
                     boardId,
                     body,
                     createdAt: now,
                 });
 
+                if (!result.ok) {
+                    res.status(400);
+                    res.send({ message: result.message });
+                    return;
+                }
+
                 res.status(200);
-                res.send(post);
+                res.send(result.post);
             } catch (err) {
                 console.log(err);
                 res.sendStatus(500);
@@ -63,7 +69,7 @@ export default class PostController implements Controller {
 
                 if (!boardId) {
                     res.status(400);
-                    res.send("must provide a boardId to retrieve posts");
+                    res.send({ message: "must provide a boardId to retrieve posts" });
                     return;
                 }
 
