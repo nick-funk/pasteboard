@@ -70,6 +70,52 @@ export default class BoardController implements Controller {
             }
         });
 
+        this.api.get("/boards", async (req, res) => {
+            try {
+                const cursor = new Date();
+                const result = await this.getBoards.query(cursor);
+
+                const view = nunjucks.render(
+                    "src/views/boards.html", 
+                    {
+                        boards: result.boards,
+                        pagination: {
+                            hasMore: result.hasMore,
+                            cursor: result.hasMore
+                                ? result.boards[result.boards.length - 1].createdAt.toISOString()
+                                : cursor.toISOString()
+                        }
+                    }
+                );
+
+                res.send(view);
+            } catch (err) {
+                console.log(err);
+                res.sendStatus(500);
+            }
+        });
+
+        this.api.get("/api/boards", async (req, res) => {
+            try {
+                const before: string | undefined = req.query.before as string;
+                const cursor = before ? new Date(before) : new Date();
+
+                const result = await this.getBoards.query(cursor);
+
+                res.status(200);
+                res.send({
+                    boards: result.boards,
+                    hasMore: result.hasMore,
+                    cursor: result.hasMore
+                        ? result.boards[result.boards.length - 1].createdAt.toISOString()
+                        : cursor.toISOString()
+                });
+            } catch (err) {
+                console.log(err);
+                res.sendStatus(500);
+            }
+        });
+
         this.api.post("/api/board/create", async (req, res) => {
             try {
                 const name = req.body.name;
@@ -95,19 +141,6 @@ export default class BoardController implements Controller {
 
                 res.status(200);
                 res.send(result.board);
-            } catch (err) {
-                console.log(err);
-                res.sendStatus(500);
-            }
-        });
-
-        this.api.get("/boards", async (req, res) => {
-            try {
-                const now = new Date();
-                const boards = await this.getBoards.query(now);
-
-                const view = nunjucks.render("src/views/boards.html", { boards });
-                res.send(view);
             } catch (err) {
                 console.log(err);
                 res.sendStatus(500);

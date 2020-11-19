@@ -29,4 +29,10 @@
             {% endfor %}
         </ul>
     </div>
+
+    {% if pagination.hasMore %}
+    <div class="block">
+        <button id="load-more" class="button" onclick="loadMore()" cursor="{{ pagination.cursor }}">Load More</button>
+    </div>
+    {% endif %}
 {% endblock %}

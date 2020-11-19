@@ -1,10 +1,27 @@
+function createBoardDiv(board) {
+    return "<li><a href=\"/board/" + board.id + "\">" + board.name + "</a></li>";
+}
+
 function insertBoard(board) {
     var boards = $("#boards");
     if (!boards) {
         return;
     }
 
-    boards.prepend("<li><a href=\"/board/" + board.id + "\">" + board.name + "</a></li>");
+    boards.prepend(
+        createBoardDiv(board)
+    );
+}
+
+function appendBoard(board) {
+    var boards = $("#boards");
+    if (!boards) {
+        return;
+    }
+
+    boards.append(
+        createBoardDiv(board)
+    );
 }
 
 function removeElement(id) {
@@ -58,6 +75,43 @@ function submit() {
             } catch {
                 showMessage("unknown error occurred", ["message-error"]);
             }
+        }
+    });
+}
+
+function loadMore() {
+    var loadMoreButton = $("#load-more");
+    var cursor = loadMoreButton.attr("cursor");
+
+    if (!cursor) {
+        return;
+    }
+
+    var url = "/api/boards?before=" + cursor;
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            try {
+                var boards = data.boards
+                for (var i = 0; i < boards.length; i++) {
+                    appendBoard(boards[i]);
+                }
+
+                if (data.hasMore) {
+                    loadMoreButton.attr("cursor", posts.cursor);
+                } else {
+                    loadMoreButton.remove();
+                }
+            } catch {
+                console.log("an error occurred attempting to load more boards");
+            }
+        },
+        error: function(xhr) {
+            console.log(xhr.responseText);
         }
     });
 }
