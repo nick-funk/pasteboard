@@ -1,9 +1,11 @@
-<html>
-    <head>
-        <script type="text/javascript" src="/static/shared/jQuery-3.5.1.min.js"></script>
-        <script type="text/javascript" src="/static/index/index.js"></script>
-    </head>
-    <body>
-        <h2>Pasteboard</h2>
-    </body>
-</html>
+{% extends "src/views/base.html" %}
+
+{% block header %}
+    <script type="text/javascript" src="/static/index/index.js"></script>
+{% endblock %}
+
+{% block body %}
+    <h2 class="title is-2">Pasteboard</h2>
+
+    <a href="/boards">Boards</a>
+{% endblock %}

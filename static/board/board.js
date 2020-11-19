@@ -4,7 +4,12 @@ function insertPost(body) {
         return;
     }
 
-    posts.prepend("<li>" + body + "</li>");
+    const newElement = 
+        "<div class=\"box\">" + 
+            body + 
+        "</div>"
+
+    posts.prepend(newElement);
 }
 
 function showMessage(message, classNames) {
@@ -18,9 +23,19 @@ function showMessage(message, classNames) {
     }
 }
 
+function removeElement(id) {
+    var el = $("#" + id);
+    if (!el) {
+        return;
+    }
+
+    el.remove();
+}
+
 function submit() {
     var boardId = $("#boardIdField").val();
-    var body = $("#bodyField").val();
+    var bodyElement = $("#bodyField");
+    var body = bodyElement.val();
 
     if (!boardId || !body) {
         return;
@@ -38,6 +53,8 @@ function submit() {
         success: function(data) {
             try {
                 insertPost(data.body);
+                bodyElement.val("");
+                removeElement("no-posts-message");
             } catch {
                 showMessage("unknown response received", ["message-error"]);
             }

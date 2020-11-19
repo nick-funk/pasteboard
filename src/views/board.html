@@ -1,21 +1,32 @@
-<html>
-    <head>
-        <script type="text/javascript" src="/static/shared/jQuery-3.5.1.min.js"></script>
-        <script type="text/javascript" src="/static/board/board.js"></script>
-    </head>
-    <body>
+{% extends "src/views/base.html" %}
+
+{% block header %}
+    <script type="text/javascript" src="/static/board/board.js"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="block">
         <form action="javascript:submit()">
-            <input type="hidden" id="boardIdField" name="boardId" value="{{ id }}" />
-            <textarea name="body" id="bodyField"></textarea>
-            <input type="submit" value="Post" />
-            <div id="message"></div>
+            <div class="field">
+                <input type="hidden" id="boardIdField" name="boardId" value="{{ id }}" />
+                <textarea name="body" id="bodyField" class="textarea"></textarea>
+            </div>
+            <div class="field">
+                <input type="submit" value="Post" class="button" />
+            </div>
+            <div class="field">
+                <div class="help" id="message"></div>
+            </div>
         </form>
-        <ul id="posts">
+    </div>
+    
+    <div class="block">
+        <div id="posts">
             {% for post in posts %}
-                <li>{{ post.body }}</li>
+                <div class="box">{{ post.body }}</div>
             {% else %}
-                <li> No posts found </li>
+                <div id="no-posts-message"> No posts found </div>
             {% endfor %}
-        </ul>
-    </body>
-</html>
+        </div>
+    </div>
+{% endblock %}

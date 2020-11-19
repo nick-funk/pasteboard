@@ -7,6 +7,15 @@ function insertBoard(board) {
     boards.prepend("<li><a href=\"/board/" + board.id + "\">" + board.name + "</a></li>");
 }
 
+function removeElement(id) {
+    var el = $("#" + id);
+    if (!el) {
+        return;
+    }
+
+    el.remove();
+}
+
 function showMessage(message, classNames) {
     var el = $("#message");
     el.html(message);
@@ -19,7 +28,8 @@ function showMessage(message, classNames) {
 }
 
 function submit() {
-    var name = $("#nameField").val();
+    var nameField = $("#nameField");
+    var name = nameField.val();
     if (!name) {
         return;
     }
@@ -35,6 +45,8 @@ function submit() {
         success: function(data) {
             try {
                 insertBoard(data);
+                nameField.val("");
+                removeElement("no-boards-message");
             } catch {
                 showMessage("unknown response received", ["message-error"]);
             }
