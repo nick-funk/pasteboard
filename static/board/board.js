@@ -1,15 +1,21 @@
+function createPost(body) {
+    const newElement = 
+        "<div class=\"box post\">" + 
+            body + 
+        "</div>";
+
+    return newElement;
+}
+
 function prependPost(body) {
     var posts = $("#posts");
     if (!posts) {
         return;
     }
 
-    const newElement = 
-        "<div class=\"box\">" + 
-            body + 
-        "</div>"
-
-    posts.prepend(newElement);
+    posts.prepend(
+        createPost(body)
+    );
 }
 
 function appendPost(body) {
@@ -18,12 +24,9 @@ function appendPost(body) {
         return;
     }
 
-    const newElement = 
-        "<div class=\"box\">" + 
-            body + 
-        "</div>"
-
-    posts.append(newElement);
+    posts.append(
+        createPost(body)
+    );
 }
 
 function showMessage(message, classNames) {

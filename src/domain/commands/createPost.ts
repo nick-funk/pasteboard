@@ -9,7 +9,7 @@ export class CreatePostResult {
 }
 
 @injectable()
-export default class CreateBoardCommand {
+export default class CreatePostCommand {
     private db: DbInstance;
 
     constructor(db: DbInstance) {

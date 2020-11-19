@@ -2,6 +2,7 @@
 
 {% block header %}
     <script type="text/javascript" src="/static/board/board.js"></script>
+    <link rel="stylesheet" href="/static/board/board.css">
 {% endblock %}
 
 {% block body %}
@@ -25,7 +26,7 @@
     <div class="block">
         <div id="posts">
             {% for post in posts %}
-                <div class="box">{{ post.body }}</div>
+                <div class="box post">{{ post.body }}</div>
             {% else %}
                 <div id="no-posts-message"> No posts found </div>
             {% endfor %}
