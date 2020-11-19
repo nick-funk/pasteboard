@@ -8,6 +8,7 @@ import ExpressProvider from "./expressProvider";
 import { Controller } from "./controller";
 import GetPostsForBoardQuery from "../domain/queries/getPostsForBoard";
 import GetBoardsQuery from "../domain/queries/getBoards";
+import GetBoardQuery from "../domain/queries/getBoard";
 
 @injectable()
 export default class BoardController implements Controller {
@@ -15,17 +16,20 @@ export default class BoardController implements Controller {
     private createBoard: CreateBoardCommand;
     private getPosts: GetPostsForBoardQuery;
     private getBoards: GetBoardsQuery;
+    private getBoard: GetBoardQuery;
 
     constructor(
         exp: ExpressProvider, 
         createBoard: CreateBoardCommand, 
         getPosts: GetPostsForBoardQuery,
         getBoards: GetBoardsQuery,
+        getBoard: GetBoardQuery,
     ) {
         this.api = exp.instance();
         this.createBoard = createBoard;
         this.getPosts = getPosts;
         this.getBoards = getBoards;
+        this.getBoard = getBoard;
     }
 
     public initialize() {
@@ -37,10 +41,28 @@ export default class BoardController implements Controller {
                     return;
                 }
 
-                const now = new Date();
-                const posts = await this.getPosts.query(boardId, 10, now);
+                const board = await this.getBoard.query(boardId);
+                if (!board) {
+                    res.sendStatus(404);
+                    return;
+                }
 
-                const view = nunjucks.render("src/views/board.html", { id: boardId, posts });
+                const now = new Date();
+                const pagination = await this.getPosts.query(boardId, 10, now);
+
+                const view = nunjucks.render("src/views/board.html", 
+                    { 
+                        id: board.id, 
+                        name: board.name, 
+                        posts: pagination.posts,
+                        pagination: {
+                            hasMore: pagination.hasMore,
+                            cursor: pagination.hasMore 
+                                ? pagination.posts[pagination.posts.length - 1].createdAt.toISOString()
+                                : now.toISOString(),
+                        }
+                    }
+                );
                 res.send(view);
             } catch (err) {
                 console.log(err);

@@ -5,6 +5,8 @@
 {% endblock %}
 
 {% block body %}
+    <h2 class="title is-2">{{ name }}</h2>
+
     <div class="block">
         <form action="javascript:submit()">
             <div class="field">
@@ -29,4 +31,10 @@
             {% endfor %}
         </div>
     </div>
+
+    {% if pagination.hasMore %}
+    <div class="block">
+        <button id="load-more" class="button" onclick="loadMore()" cursor="{{ pagination.cursor }}">Load More</button>
+    </div>
+    {% endif %}
 {% endblock %}

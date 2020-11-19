@@ -64,8 +64,9 @@ export default class PostController implements Controller {
 
         this.api.get("/api/posts", async (req, res) => {
             try {
-                const boardId = req.body.boardId;
-                const before = req.body.before ? new Date(req.body.before) : undefined;
+                const boardId: string | undefined = req.query.boardId as string;
+                const before: string | undefined = req.query.before as string;
+                const cursor = before ? new Date(before) : undefined;
 
                 if (!boardId) {
                     res.status(400);
@@ -73,10 +74,16 @@ export default class PostController implements Controller {
                     return;
                 }
 
-                const posts = await this.getPosts.query(boardId, 10, before);
+                const result = await this.getPosts.query(boardId, 10, cursor);
 
                 res.status(200);
-                res.send(posts);
+                res.send({
+                    posts: result.posts,
+                    hasMore: result.hasMore,
+                    cursor: result.hasMore 
+                        ? result.posts[result.posts.length - 1].createdAt.toISOString()
+                        : new Date().toISOString()
+                });
             } catch (err) {
                 console.log(err);
                 res.sendStatus(500);

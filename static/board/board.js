@@ -1,4 +1,4 @@
-function insertPost(body) {
+function prependPost(body) {
     var posts = $("#posts");
     if (!posts) {
         return;
@@ -10,6 +10,20 @@ function insertPost(body) {
         "</div>"
 
     posts.prepend(newElement);
+}
+
+function appendPost(body) {
+    var posts = $("#posts");
+    if (!posts) {
+        return;
+    }
+
+    const newElement = 
+        "<div class=\"box\">" + 
+            body + 
+        "</div>"
+
+    posts.append(newElement);
 }
 
 function showMessage(message, classNames) {
@@ -52,7 +66,7 @@ function submit() {
         contentType: "application/json",
         success: function(data) {
             try {
-                insertPost(data.body);
+                prependPost(data.body);
                 bodyElement.val("");
                 removeElement("no-posts-message");
             } catch {
@@ -66,6 +80,46 @@ function submit() {
             } catch {
                 showMessage("unknown error occurred", ["message-error"]);
             }
+        }
+    });
+}
+
+function loadMore() {
+    var loadMoreButton = $("#load-more");
+    var cursor = loadMoreButton.attr("cursor");
+    var boardId = $("#boardIdField").val();
+
+    if (!cursor || !boardId) {
+        return;
+    }
+
+    var url = "/api/posts?boardId=" +
+        boardId + "&" +
+        "before=" + cursor;
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            try {
+                var posts = data.posts
+                for (var i = 0; i < posts.length; i++) {
+                    appendPost(posts[i].body);
+                }
+
+                if (data.hasMore) {
+                    loadMoreButton.attr("cursor", posts.cursor);
+                } else {
+                    loadMoreButton.remove();
+                }
+            } catch {
+                console.log("an error occurred attempting to load more posts");
+            }
+        },
+        error: function(xhr) {
+            console.log(xhr.responseText);
         }
     });
 }

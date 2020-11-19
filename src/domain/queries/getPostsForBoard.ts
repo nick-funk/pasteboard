@@ -3,6 +3,11 @@ import { injectable } from "tsyringe";
 import Post from "../models/post";
 import { DbInstance } from "../../data/db";
 
+export interface PostsPaginationResult {
+    posts: Post[];
+    hasMore: boolean;
+}
+
 @injectable()
 export default class GetPostsForBoardQuery {
     private db: DbInstance;
@@ -13,7 +18,7 @@ export default class GetPostsForBoardQuery {
 
     public async query(
         boardId: string, count: number = 10, before?: Date
-    ): Promise<Post[]> {
+    ): Promise<PostsPaginationResult> {
         const posts = this.db.collection("posts");
 
         const query = before ? 
@@ -23,9 +28,14 @@ export default class GetPostsForBoardQuery {
         const items = 
             await posts.find(query)
                 .sort({ createdAt: -1 })
-                .limit(count)
+                .limit(count + 1)
                 .toArray();
 
-        return items;
+        const result: PostsPaginationResult = {
+            hasMore: items.length > count,
+            posts: items.slice(0, 10),
+        };
+
+        return result;
     }
 }
