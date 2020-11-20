@@ -1,6 +1,8 @@
 <html>
     <head>
         <script type="text/javascript" src="/static/shared/jQuery-3.5.1.min.js"></script>
+        
+        <link rel="stylesheet" href="/static/shared/shared.css">
         <link rel="stylesheet" href="/static/shared/bulma.min.css">
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +11,9 @@
         {% endblock %}
     </head>
     <body>
-        {% block body %}
-        {% endblock %}
+        <div class="body-content">
+            {% block body %}
+            {% endblock %}
+        </div>
     </body>
 </html>
