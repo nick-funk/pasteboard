@@ -2,6 +2,7 @@ import express from "express";
 import { injectable } from "tsyringe";
 import { v4 as uuid } from "uuid";
 import nunjucks from "nunjucks";
+import rateLimit from "express-rate-limit";
 
 import CreateBoardCommand from "../domain/commands/createBoard";
 import ExpressProvider from "./expressProvider";
@@ -33,7 +34,12 @@ export default class BoardController implements Controller {
     }
 
     public initialize() {
-        this.api.get("/board/:boardId", async (req, res) => {
+        const limiter = rateLimit({
+            windowMs: 10 * 60 * 1000,
+            max: 100
+        });
+
+        this.api.get("/board/:boardId", limiter, async (req, res) => {
             try {
                 const boardId = req.params.boardId;
                 if (!boardId) {
@@ -70,7 +76,7 @@ export default class BoardController implements Controller {
             }
         });
 
-        this.api.get("/boards", async (req, res) => {
+        this.api.get("/boards", limiter, async (req, res) => {
             try {
                 const cursor = new Date();
                 const result = await this.getBoards.query(cursor);
@@ -95,7 +101,7 @@ export default class BoardController implements Controller {
             }
         });
 
-        this.api.get("/api/boards", async (req, res) => {
+        this.api.get("/api/boards", limiter, async (req, res) => {
             try {
                 const before: string | undefined = req.query.before as string;
                 const cursor = before ? new Date(before) : new Date();
@@ -116,7 +122,7 @@ export default class BoardController implements Controller {
             }
         });
 
-        this.api.post("/api/board/create", async (req, res) => {
+        this.api.post("/api/board/create", limiter, async (req, res) => {
             try {
                 const name = req.body.name;
                 const now = new Date();

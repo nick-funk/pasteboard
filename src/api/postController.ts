@@ -1,11 +1,13 @@
 import express from "express";
 import { injectable } from "tsyringe";
 import { v4 as uuid } from "uuid";
+import rateLimit from "express-rate-limit";
 
 import CreatePostCommand from "../domain/commands/createPost";
 import ExpressProvider from "./expressProvider";
 import { Controller } from "./controller";
 import GetPostsForBoardQuery from "../domain/queries/getPostsForBoard";
+
 
 @injectable()
 export default class PostController implements Controller {
@@ -24,7 +26,12 @@ export default class PostController implements Controller {
     }
 
     public initialize() {
-        this.api.post("/api/post/create", async (req, res) => {
+        const limiter = rateLimit({
+            windowMs: 10 * 60 * 1000,
+            max: 100
+        });
+
+        this.api.post("/api/post/create", limiter, async (req, res) => {
             try {
                 const body = req.body.body;
                 const boardId = req.body.boardId;
@@ -62,7 +69,7 @@ export default class PostController implements Controller {
             }
         });
 
-        this.api.get("/api/posts", async (req, res) => {
+        this.api.get("/api/posts", limiter, async (req, res) => {
             try {
                 const boardId: string | undefined = req.query.boardId as string;
                 const before: string | undefined = req.query.before as string;
