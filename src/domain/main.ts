@@ -16,6 +16,19 @@ export class Main {
     public run() {
         this.controllers.all().forEach(c => c.initialize());
 
+        this.setupErrorHandling();
+
         this.exp.start();
+    }
+
+    private setupErrorHandling() {
+        this.exp.instance().use((error, _req, res, _next) => {
+            if (!error.statusCode) {
+                error.statusCode = 500;
+            }
+
+            return res.status(500)
+                    .json({ error: error.toString() });
+        });
     }
 }
