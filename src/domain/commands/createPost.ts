@@ -1,6 +1,8 @@
+import { injectable } from "tsyringe";
+import escape from "escape-html";
+
 import { DbInstance } from "../../data/db";
 import Post from "../models/post";
-import { injectable } from "tsyringe";
 
 export class CreatePostResult {
     ok: boolean;
@@ -25,7 +27,7 @@ export default class CreatePostCommand {
             return {
                 ok: false,
                 message: "board does not exist"
-            }
+            };
         }
 
         const existing = await posts.findOne({ id: post.id });
@@ -33,21 +35,28 @@ export default class CreatePostCommand {
             return {
                 ok: false,
                 message: "post with id already exists"
-            }
+            };
         }
 
-        const result = (await posts.insertOne(post)).result;
+        const cleanBody = escape(post.body);
+        post.body = cleanBody;
+
+        const update = await posts.insertOne(post);
+        const result = update.result;
+
         if (!result.ok) {
             return {
                 ok: false,
                 message: "failed to create new post"
-            }
+            };
         }
+
+        const newPost = update.ops[0] as Post;
 
         return {
             ok: true,
             message: "successfully created new post",
-            post: post
+            post: newPost
         };
     }
 }
