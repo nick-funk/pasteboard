@@ -1,8 +1,6 @@
 function createPost(body) {
-    const newElement = 
-        "<div class=\"box post\">" + 
-            body + 
-        "</div>";
+    var newElement = $("<div class=\"box post\"></div>");
+    newElement.text(body);
 
     return newElement;
 }

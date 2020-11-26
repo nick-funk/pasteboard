@@ -1,5 +1,14 @@
 function createBoardDiv(board) {
-    return "<li><a href=\"/board/" + board.id + "\">" + board.name + "</a></li>";
+    var url = "/board/" + board.id;
+    
+    var anchor = $("<a></a>");
+    anchor.text(board.name);
+    anchor.attr("href", url);
+
+    var li = $("<li></li>");
+    li.append(anchor);
+
+    return li;
 }
 
 function insertBoard(board) {

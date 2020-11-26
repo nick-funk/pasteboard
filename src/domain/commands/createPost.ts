@@ -38,9 +38,6 @@ export default class CreatePostCommand {
             };
         }
 
-        const cleanBody = escape(post.body);
-        post.body = cleanBody;
-
         const update = await posts.insertOne(post);
         const result = update.result;
 
