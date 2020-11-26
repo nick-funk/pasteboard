@@ -6,19 +6,6 @@
 
 {% block body %}
     <h2 class="title is-2">Boards</h2>
-    <div class="block">
-        <form action="javascript:submit()">
-            <div class="field">
-                <input type="text" name="name" id="nameField" class="input" />
-            </div>
-            <div class="field">
-                <input type="submit" value="Create" class="button" />
-            </div>
-            <div class="field">
-                <div class="help" id="message"></div>
-            </div>
-        </form>
-    </div>
 
     <div class="content">
         <ul id="boards">
@@ -35,4 +22,18 @@
         <button id="load-more" class="button" onclick="loadMore()" cursor="{{ pagination.cursor }}">Load More</button>
     </div>
     {% endif %}
+
+    <div class="block">
+        <form action="javascript:submit()">
+            <div class="field">
+                <input type="text" name="name" id="nameField" class="input" />
+            </div>
+            <div class="field">
+                <input type="submit" value="Create" class="button" />
+            </div>
+            <div class="field">
+                <div class="help" id="message"></div>
+            </div>
+        </form>
+    </div>
 {% endblock %}
