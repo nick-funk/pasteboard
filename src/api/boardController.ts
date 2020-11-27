@@ -63,9 +63,7 @@ export default class BoardController implements Controller {
                         posts: pagination.posts,
                         pagination: {
                             hasMore: pagination.hasMore,
-                            cursor: pagination.hasMore 
-                                ? pagination.posts[pagination.posts.length - 1].createdAt.toISOString()
-                                : now.toISOString(),
+                            cursor: pagination.cursor ? pagination.cursor.toISOString() : undefined
                         }
                     }
                 );
@@ -87,9 +85,7 @@ export default class BoardController implements Controller {
                         boards: result.boards,
                         pagination: {
                             hasMore: result.hasMore,
-                            cursor: result.hasMore
-                                ? result.boards[result.boards.length - 1].createdAt.toISOString()
-                                : cursor.toISOString()
+                            cursor: result.cursor ? result.cursor.toISOString() : undefined
                         }
                     }
                 );
@@ -112,9 +108,7 @@ export default class BoardController implements Controller {
                 res.send({
                     boards: result.boards,
                     hasMore: result.hasMore,
-                    cursor: result.hasMore
-                        ? result.boards[result.boards.length - 1].createdAt.toISOString()
-                        : cursor.toISOString()
+                    cursor: result.cursor ? result.cursor.toISOString() : undefined
                 });
             } catch (err) {
                 console.log(err);

@@ -6,6 +6,7 @@ import Board from "../../domain/models/board";
 export interface BoardsPaginationResult {
     boards: Board[];
     hasMore: boolean;
+    cursor?: Date;
 }
 
 @injectable()
@@ -22,7 +23,7 @@ export default class GetBoardsQuery {
     {
         const posts = this.db.collection("boards");
 
-        const query = { createdAt: { $lt: before } };
+        const query = { createdAt: { $lte: before } };
 
         const items = 
             await posts.find(query)
@@ -33,6 +34,7 @@ export default class GetBoardsQuery {
         const result: BoardsPaginationResult = {
             hasMore: items.length > count,
             boards: items.slice(0, 10),
+            cursor: items.length > 0 ? items[items.length - 1].createdAt : undefined,
         };
 
         return result;

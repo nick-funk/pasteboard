@@ -87,9 +87,7 @@ export default class PostController implements Controller {
                 res.send({
                     posts: result.posts,
                     hasMore: result.hasMore,
-                    cursor: result.hasMore 
-                        ? result.posts[result.posts.length - 1].createdAt.toISOString()
-                        : new Date().toISOString()
+                    cursor: result.cursor ? result.cursor.toISOString() : undefined
                 });
             } catch (err) {
                 console.log(err);

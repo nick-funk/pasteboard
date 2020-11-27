@@ -86,7 +86,7 @@ function submit() {
 }
 
 function loadMore() {
-    var loadMoreButton = $("#load-more");
+    var loadMoreButton = $("#loadMore");
     var cursor = loadMoreButton.attr("cursor");
     var boardId = $("#boardIdField").val();
 
@@ -110,12 +110,17 @@ function loadMore() {
                     appendPost(posts[i].body);
                 }
 
-                if (data.hasMore) {
-                    loadMoreButton.attr("cursor", posts.cursor);
+                if (data.cursor !== undefined) {
+                    loadMoreButton[0].setAttribute("cursor", data.cursor);
                 } else {
                     loadMoreButton.remove();
                 }
-            } catch {
+
+                if (!data.hasMore) {
+                    loadMoreButton.remove();
+                }
+            } catch (err) {
+                console.log(err);
                 console.log("an error occurred attempting to load more posts");
             }
         },

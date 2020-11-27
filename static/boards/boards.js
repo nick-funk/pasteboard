@@ -89,7 +89,7 @@ function submit() {
 }
 
 function loadMore() {
-    var loadMoreButton = $("#load-more");
+    var loadMoreButton = $("#loadMore");
     var cursor = loadMoreButton.attr("cursor");
 
     if (!cursor) {
@@ -110,9 +110,13 @@ function loadMore() {
                     appendBoard(boards[i]);
                 }
 
-                if (data.hasMore) {
-                    loadMoreButton.attr("cursor", posts.cursor);
+                if (data.cursor !== undefined) {
+                    loadMoreButton[0].setAttribute("cursor", data.cursor);
                 } else {
+                    loadMoreButton.remove();
+                }
+
+                if (!data.hasMore) {
                     loadMoreButton.remove();
                 }
             } catch {

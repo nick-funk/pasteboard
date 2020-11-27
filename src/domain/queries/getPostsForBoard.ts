@@ -6,6 +6,7 @@ import { DbInstance } from "../../data/db";
 export interface PostsPaginationResult {
     posts: Post[];
     hasMore: boolean;
+    cursor?: Date;
 }
 
 @injectable()
@@ -22,7 +23,7 @@ export default class GetPostsForBoardQuery {
         const posts = this.db.collection("posts");
 
         const query = before ? 
-            { boardId, createdAt: { $lt: before } } :
+            { boardId, createdAt: { $lte: before } } :
             { boardId }
 
         const items = 
@@ -34,6 +35,7 @@ export default class GetPostsForBoardQuery {
         const result: PostsPaginationResult = {
             hasMore: items.length > count,
             posts: items.slice(0, 10),
+            cursor: items.length > 0 ? items[items.length - 1].createdAt : undefined,
         };
 
         return result;
