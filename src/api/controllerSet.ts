@@ -4,6 +4,7 @@ import BoardController from "./boardController";
 import { Controller } from "./controller";
 import PostController from "./postController";
 import StaticController from "./staticController";
+import UserController from "./userController";
 
 @injectable()
 export default class ControllerSet {
@@ -13,11 +14,13 @@ export default class ControllerSet {
         boardController: BoardController,
         postController: PostController,
         staticController: StaticController,
+        userController: UserController,
     ) {
         this.controllers = [
             staticController,
             boardController,
             postController,
+            userController,
         ];
     }
 

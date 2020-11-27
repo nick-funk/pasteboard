@@ -1,0 +1,32 @@
+{% extends "src/views/base.html" %}
+
+{% block header %}
+    <script type="text/javascript" src="/static/register/register.js"></script>
+{% endblock %}
+
+{% block body %}
+    <h2 class="title is-2">Register new account</h2>
+
+    <div class="block">
+        <form action="javascript:submit()">
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="text" class="input" />
+            </div>
+            <div class="field">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" class="input" />
+            </div>
+            <div class="field">
+                <label for="pass">Password</label>
+                <input id="pass" name="pass" type="password" class="input" />
+            </div>
+            <div class="field">
+                <input type="submit" value="Create" class="button" />
+            </div>
+            <div class="field">
+                <div class="help" id="message"></div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

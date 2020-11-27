@@ -6,14 +6,20 @@ import { container } from "tsyringe";
 import { EnvironmentVariables } from "./domain/environment";
 import { Main } from "./domain/main";
 import { DbInstance } from "./data/db";
+
 import ExpressProvider from "./api/expressProvider";
+
 import BoardController from "./api/boardController";
 import PostController from "./api/postController";
+import StaticController from "./api/staticController";
+import UserController from "./api/userController";
+import ControllerSet from "./api/controllerSet";
+
 import CreateBoardCommand from "./domain/commands/createBoard";
 import CreatePostCommand from "./domain/commands/createPost";
-import ControllerSet from "./api/controllerSet";
+import CreateUserCommand from "./domain/commands/createUser";
+
 import GetPostsForBoardQuery from "./domain/queries/getPostsForBoard";
-import StaticController from "./api/staticController";
 import GetBoardsQuery from "./domain/queries/getBoards";
 import GetBoardQuery from "./domain/queries/getBoard";
 
@@ -26,6 +32,7 @@ const run = async () => {
 
     container.registerSingleton<CreateBoardCommand>(CreateBoardCommand);
     container.registerSingleton<CreatePostCommand>(CreatePostCommand);
+    container.registerSingleton<CreateUserCommand>(CreateUserCommand);
 
     container.registerSingleton<GetPostsForBoardQuery>(GetPostsForBoardQuery);
     container.registerSingleton<GetBoardsQuery>(GetBoardsQuery);
@@ -42,6 +49,7 @@ const run = async () => {
     container.registerSingleton<StaticController>(StaticController);
     container.registerSingleton<BoardController>(BoardController);
     container.registerSingleton<PostController>(PostController);
+    container.registerSingleton<UserController>(UserController);
     container.registerSingleton<ControllerSet>(ControllerSet);
 
     // Start up
