@@ -1,4 +1,3 @@
-
 import { injectable } from "tsyringe";
 import bcrypt, { hash } from "bcrypt";
 import { v4 as uuid } from "uuid";

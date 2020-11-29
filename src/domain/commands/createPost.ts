@@ -1,5 +1,4 @@
 import { injectable } from "tsyringe";
-import escape from "escape-html";
 
 import { DbInstance } from "../../data/db";
 import Post from "../models/post";

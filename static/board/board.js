@@ -1,29 +1,42 @@
-function createPost(body) {
+function createPost(post) {
     var newElement = $("<div class=\"box post\"></div>");
-    newElement.text(body);
+    newElement.attr("id", post.id)
+
+    var content = $("<div class=\"content\"></div>");
+    content.text(post.body);
+
+    newElement.append(content);
+
+    var deleteButton = $(
+        "<button class=\"button is-danger deleteButton\" alt=\"delete\" onclick='deletePost(\"" +
+            post.id +
+        "\")'>×</button>"
+    );
+
+    newElement.append(deleteButton);
 
     return newElement;
 }
 
-function prependPost(body) {
+function prependPost(post) {
     var posts = $("#posts");
     if (!posts) {
         return;
     }
 
     posts.prepend(
-        createPost(body)
+        createPost(post)
     );
 }
 
-function appendPost(body) {
+function appendPost(post) {
     var posts = $("#posts");
     if (!posts) {
         return;
     }
 
     posts.append(
-        createPost(body)
+        createPost(post)
     );
 }
 
@@ -67,7 +80,7 @@ function submit() {
         contentType: "application/json",
         success: function(data) {
             try {
-                prependPost(data.body);
+                prependPost(data);
                 bodyElement.val("");
                 removeElement("no-posts-message");
             } catch {
@@ -107,7 +120,7 @@ function loadMore() {
             try {
                 var posts = data.posts
                 for (var i = 0; i < posts.length; i++) {
-                    appendPost(posts[i].body);
+                    appendPost(posts[i]);
                 }
 
                 if (data.cursor !== undefined) {
@@ -120,8 +133,38 @@ function loadMore() {
                     loadMoreButton.remove();
                 }
             } catch (err) {
-                console.log(err);
                 console.log("an error occurred attempting to load more posts");
+            }
+        },
+        error: function(xhr) {
+            console.log(xhr.responseText);
+        }
+    });
+}
+
+function deletePost(id) {
+    if (!id) {
+        return;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: "/api/post/delete",
+        data: JSON.stringify({
+            id: id
+        }),
+        dataType: "json",
+        contentType: "application/json",
+        success: function(data) {
+            try {
+                var el = $("#" + id);
+                if (!el) {
+                    return;
+                }
+
+                el.remove();
+            } catch (err) {
+                console.log("an error occurred attempting to delete a post");
             }
         },
         error: function(xhr) {

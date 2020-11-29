@@ -7,6 +7,7 @@ import CreatePostCommand from "../domain/commands/createPost";
 import ExpressProvider from "./expressProvider";
 import { Controller } from "./controller";
 import GetPostsForBoardQuery from "../domain/queries/getPostsForBoard";
+import DeletePostCommand from "../domain/commands/deletePost";
 
 
 @injectable()
@@ -14,15 +15,18 @@ export default class PostController implements Controller {
     private api: express.Express;
     private createPost: CreatePostCommand;
     private getPosts: GetPostsForBoardQuery;
+    private deletePost: DeletePostCommand;
 
     constructor(
         exp: ExpressProvider, 
         createPost: CreatePostCommand,
-        getPosts: GetPostsForBoardQuery
+        getPosts: GetPostsForBoardQuery,
+        deletePost: DeletePostCommand,
     ) {
         this.api = exp.instance();
         this.createPost = createPost;
         this.getPosts = getPosts;
+        this.deletePost = deletePost;
     }
 
     public initialize() {
@@ -63,6 +67,32 @@ export default class PostController implements Controller {
 
                 res.status(200);
                 res.send(result.post);
+            } catch (err) {
+                console.log(err);
+                res.sendStatus(500);
+            }
+        });
+
+        this.api.post("/api/post/delete", limiter, async (req, res) => {
+            try {
+                const id = req.body.id;
+
+                if (!id) {
+                    res.status(400);
+                    res.send({ message: "must provide an id to delete a post" });
+                    return;
+                }
+
+                const result = await this.deletePost.execute(id);
+
+                if (!result.ok) {
+                    res.status(400);
+                    res.send({ message: result.message });
+                    return;
+                }
+
+                res.status(200);
+                res.send({ message: result.message });
             } catch (err) {
                 console.log(err);
                 res.sendStatus(500);
