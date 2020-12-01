@@ -50,9 +50,24 @@ class SiteCollection {
     func add(name: String, url: String) {
         self.sites.values.append(Site.init(name: name, url: url));
         
+        serialize();
+    }
+    
+    func remove(name: String) {
+        if let index = self.sites.values.firstIndex(where: {
+            site in
+            return site.name == name
+        }) {
+            self.sites.values.remove(at: index)
+        }
+        
+        serialize();
+    }
+    
+    func serialize() {
         var keyValue: String = "";
         for site in self.sites.values {
-            keyValue.append(site.name + "," + site.url);
+            keyValue.append(site.name + "," + site.url + ",");
         }
         
         LocalStorage.value = keyValue;
@@ -60,7 +75,10 @@ class SiteCollection {
     
     func load() {
         let raw = LocalStorage.value;
-        let values = raw.components(separatedBy: ",");
+        let values = raw.components(separatedBy: ",").filter {
+            value in
+            value.count > 0
+        };
         
         if (values.count < 2) {
             return;
@@ -149,35 +167,42 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Text("Pasteboard")
-            VStack {
-                if (showAddSite) {
-                    self.addSite
-                }
-                Button(action: {
-                    if (!showAddSite) {
-                        self.showAddSite = true;
-                    } else {
-                        let name: String = self.addSite.name();
-                        let url: String = self.addSite.url();
-    
-                        self.siteCollection.add(name: name, url: url);
-                        self.showAddSite = false;
-                    }
-                }) {
-                    Text("+")
-                }
-                HStack {
-                    ForEach(self.siteCollection.sites.values, id: \.url) { site in
+            HStack {
+                ForEach(self.siteCollection.sites.values, id: \.url) { site in
+                    HStack {
                         Button(action: {
                             let url: String = site.url;
                             self.webView.navigateTo(url: URL.init(string: url)!)
                         }) {
                             Text(site.name)
                         }
-                    }
+                            // Button(action: {
+                            //    let name: String = site.name;
+                            //    self.siteCollection.remove(name: name)
+                            //    }) {
+                            //        Text("-")
+                            //    }
+                    }.padding()
                 }
+                Button(action: {
+                    self.showAddSite = true;
+                }) {
+                    Text("+")
+                }.padding()
             }
             self.webView
+        }
+        .sheet(isPresented: $showAddSite) {
+            self.addSite
+            Button(action: {
+                let name: String = self.addSite.name();
+                let url: String = self.addSite.url();
+
+                self.siteCollection.add(name: name, url: url);
+                self.showAddSite = false;
+            }) {
+                Text("Add Site")
+            }
         }
     }
 }
