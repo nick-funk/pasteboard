@@ -124,6 +124,7 @@ struct AddSiteView : View {
     @ObservedObject public var url = ObservedText()
     
     var body: some View {
+        Text("Add Site").padding()
         VStack {
             Text("Name")
             TextField("name", text: Binding(
@@ -147,7 +148,7 @@ struct AddSiteView : View {
                     return self.url.value = newValue;
                 }
             ))
-        }
+        }.padding()
     }
 }
 
@@ -176,7 +177,7 @@ struct ContentView: View {
                             self.siteCollection.remove(name: name)
                         }) {
                             Text("-")
-                        }
+                        }.padding()
                     }.padding()
                 }
                 Button(action: {
@@ -189,20 +190,23 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showAddSite) {
             self.addSite
-            Button(action: {
-                let name: String = self.addSite.name.value;
-                let url: String = self.addSite.url.value;
+            
+            HStack {
+                Button(action: {
+                    let name: String = self.addSite.name.value;
+                    let url: String = self.addSite.url.value;
 
-                self.siteCollection.add(name: name, url: url);
-                self.showAddSite = false;
-            }) {
-                Text("Add Site")
-            }
-            Button(action: {
-                self.showAddSite = false;
-            }) {
-                Text("Cancel")
-            }
+                    self.siteCollection.add(name: name, url: url);
+                    self.showAddSite = false;
+                }) {
+                    Text("Add Site")
+                }.padding()
+                Button(action: {
+                    self.showAddSite = false;
+                }) {
+                    Text("Cancel")
+                }.padding()
+            }.padding()
         }
     }
 }
