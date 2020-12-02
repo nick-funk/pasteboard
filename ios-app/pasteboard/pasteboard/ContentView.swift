@@ -26,47 +26,46 @@ class LocalStorage {
     }
 }
 
-class Site {
-    public var name: String;
-    public var url: String;
+class Site: ObservableObject {
+    @Published public var name: String = ""
+    @Published public var url: String = ""
     
     init(name: String, url: String) {
+        self.objectWillChange.send()
         self.name = name;
         self.url = url;
     }
 }
 
-class ObservedSites: ObservableObject {
+class SiteCollection: ObservableObject {
     @Published public var values: [Site] = [];
-}
-
-class SiteCollection {
-    @ObservedObject public var sites: ObservedSites = ObservedSites();
     
     init() {
         load();
     }
     
     func add(name: String, url: String) {
-        self.sites.values.append(Site.init(name: name, url: url));
+        self.objectWillChange.send()
+        self.values.append(Site.init(name: name, url: url))
         
-        serialize();
+        serialize()
     }
     
     func remove(name: String) {
-        if let index = self.sites.values.firstIndex(where: {
+        if let index = self.values.firstIndex(where: {
             site in
             return site.name == name
         }) {
-            self.sites.values.remove(at: index)
+            self.objectWillChange.send()
+            self.values.remove(at: index)
+            
+            serialize()
         }
-        
-        serialize();
     }
     
     func serialize() {
         var keyValue: String = "";
-        for site in self.sites.values {
+        for site in self.values {
             keyValue.append(site.name + "," + site.url + ",");
         }
         
@@ -121,54 +120,50 @@ class ObservedText: ObservableObject {
 }
 
 struct AddSiteView : View {
-    @ObservedObject public var _name = ObservedText()
-    @ObservedObject public var _url = ObservedText()
+    @ObservedObject public var name = ObservedText()
+    @ObservedObject public var url = ObservedText()
     
     var body: some View {
         VStack {
             Text("Name")
             TextField("name", text: Binding(
                 get: {
-                    return self._name.value;
+                    return self.name.value;
                 },
                 set: {
                     newValue in
-                    return self._name.value = newValue;
+                    self.name.objectWillChange.send();
+                    return self.name.value = newValue;
                 }
             ))
             Text("URL")
             TextField("url", text: Binding(
                 get: {
-                    return self._url.value;
+                    return self.url.value;
                 },
                 set: {
                     newValue in
-                    return self._url.value = newValue;
+                    self.url.objectWillChange.send();
+                    return self.url.value = newValue;
                 }
             ))
         }
     }
-    
-    func name() -> String {
-        return self._name.value;
-    }
-    
-    func url() -> String {
-        return self._url.value;
-    }
 }
 
 struct ContentView: View {
+    private var addSite = AddSiteView()
+    
+    @ObservedObject private var siteCollection = SiteCollection()
+    
     @State private var webView = WebViewWrapper()
-    private var siteCollection = SiteCollection()
-    @State private var addSite = AddSiteView()
     @State private var showAddSite = false;
     
     var body: some View {
         VStack {
             Text("Pasteboard")
             HStack {
-                ForEach(self.siteCollection.sites.values, id: \.url) { site in
+                ForEach(self.siteCollection.values, id: \.name) { site in
                     HStack {
                         Button(action: {
                             let url: String = site.url;
@@ -176,12 +171,12 @@ struct ContentView: View {
                         }) {
                             Text(site.name)
                         }
-                            // Button(action: {
-                            //    let name: String = site.name;
-                            //    self.siteCollection.remove(name: name)
-                            //    }) {
-                            //        Text("-")
-                            //    }
+                        Button(action: {
+                            let name: String = site.name;
+                            self.siteCollection.remove(name: name)
+                        }) {
+                            Text("-")
+                        }
                     }.padding()
                 }
                 Button(action: {
@@ -195,13 +190,18 @@ struct ContentView: View {
         .sheet(isPresented: $showAddSite) {
             self.addSite
             Button(action: {
-                let name: String = self.addSite.name();
-                let url: String = self.addSite.url();
+                let name: String = self.addSite.name.value;
+                let url: String = self.addSite.url.value;
 
                 self.siteCollection.add(name: name, url: url);
                 self.showAddSite = false;
             }) {
                 Text("Add Site")
+            }
+            Button(action: {
+                self.showAddSite = false;
+            }) {
+                Text("Cancel")
             }
         }
     }
