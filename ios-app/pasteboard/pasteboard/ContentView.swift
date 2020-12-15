@@ -197,6 +197,20 @@ struct ContentView: View {
             
             HStack {
                 Button(action: {
+                    if (self.currentSiteURL != "") {
+                        self.webView.navigateTo(url: URL.init(string: self.currentSiteURL)!)
+                    }
+                }) {
+                    Image(systemName: "house")
+                }.buttonStyle(
+                    NeumorphicButtonStyle(
+                        backgroundColor: .orange,
+                        foregroundColor: .white
+                    )
+                )
+                .frame(minWidth: 100)
+                
+                Button(action: {
                     self.showSites = true;
                 }) {
                     Text("Sites")
@@ -207,7 +221,6 @@ struct ContentView: View {
                     )
                 )
                 .frame(minWidth: 100)
-                .padding()
                 .sheet(isPresented: self.$showSites) {
                     VStack {
                         HStack {
@@ -248,7 +261,7 @@ struct ContentView: View {
                                                 foregroundColor: .white
                                             )
                                         )
-                                        .frame(minWidth: 150, maxWidth: .infinity)
+                                        .frame(minWidth: 100, maxWidth: .infinity)
                                         .padding()
                                     }.padding()
                                 }
@@ -256,6 +269,20 @@ struct ContentView: View {
                         }
                         
                         HStack {
+                            Button(action: {
+                                self.showSites = false;
+                            }) {
+                                Image(systemName: "arrowshape.turn.up.backward.fill")
+                            }
+                            .buttonStyle(
+                                NeumorphicButtonStyle(
+                                    backgroundColor: .gray,
+                                    foregroundColor: .white
+                                )
+                            )
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding()
+                            
                             Button(action: {
                                 self.showAddSite = true;
                             }) {
@@ -266,10 +293,25 @@ struct ContentView: View {
                                     foregroundColor: .white
                                 )
                             )
+                            .frame(minWidth: 0, maxWidth: .infinity)
                             .padding()
                             .sheet(isPresented: self.$showAddSite) {
                                 self.addSite
                                 HStack {
+                                    Button(action: {
+                                        self.showAddSite = false;
+                                    }) {
+                                        Text("Cancel")
+                                    }
+                                    .buttonStyle(
+                                        NeumorphicButtonStyle(
+                                            backgroundColor: .gray,
+                                            foregroundColor: .white
+                                        )
+                                    )
+                                    .frame(minWidth: 0, maxWidth: .infinity)
+                                    .padding()
+                                    
                                     Button(action: {
                                         let name: String = self.addSite.name.value;
                                         let url: String = self.addSite.url.value;
@@ -286,53 +328,14 @@ struct ContentView: View {
                                             foregroundColor: .white
                                         )
                                     )
-                                    .padding()
-                                    
-                                    Button(action: {
-                                        self.showAddSite = false;
-                                    }) {
-                                        Text("Cancel")
-                                    }
-                                    .buttonStyle(
-                                        NeumorphicButtonStyle(
-                                            backgroundColor: .gray,
-                                            foregroundColor: .white
-                                        )
-                                    )
+                                    .frame(minWidth: 0, maxWidth: .infinity)
                                     .padding()
                                 }.padding()
                             }
-                            
-                            Button(action: {
-                                self.showSites = false;
-                            }) {
-                                Text("Cancel")
-                            }.buttonStyle(
-                                NeumorphicButtonStyle(
-                                    backgroundColor: .gray,
-                                    foregroundColor: .white
-                                )
-                            )
-                            .padding()
                         }
                         .frame(minWidth: 0, maxWidth: .infinity)
                     }
                 }
-                
-                Button(action: {
-                    if (self.currentSiteURL != "") {
-                        self.webView.navigateTo(url: URL.init(string: self.currentSiteURL)!)
-                    }
-                }) {
-                    Image(systemName: "house")
-                }.buttonStyle(
-                    NeumorphicButtonStyle(
-                        backgroundColor: .orange,
-                        foregroundColor: .white
-                    )
-                )
-                .frame(minWidth: 100)
-                .padding()
             }
         }
     }
