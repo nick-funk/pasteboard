@@ -184,6 +184,7 @@ struct ContentView: View {
     @ObservedObject private var siteCollection = SiteCollection()
     
     @State private var webView = WebViewWrapper()
+    @State private var currentSiteURL = "";
     
     @State private var showAddSite = false;
     @State private var showSites = false;
@@ -233,6 +234,8 @@ struct ContentView: View {
                                         
                                         Button(action: {
                                             let url: String = site.url;
+                                            
+                                            self.currentSiteURL = url;
                                             self.webView.navigateTo(url: URL.init(string: url)!)
                                             
                                             self.showSites = false;
@@ -315,6 +318,21 @@ struct ContentView: View {
                         .frame(minWidth: 0, maxWidth: .infinity)
                     }
                 }
+                
+                Button(action: {
+                    if (self.currentSiteURL != "") {
+                        self.webView.navigateTo(url: URL.init(string: self.currentSiteURL)!)
+                    }
+                }) {
+                    Image(systemName: "house")
+                }.buttonStyle(
+                    NeumorphicButtonStyle(
+                        backgroundColor: .orange,
+                        foregroundColor: .white
+                    )
+                )
+                .frame(minWidth: 100)
+                .padding()
             }
         }
     }
