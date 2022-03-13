@@ -6,7 +6,7 @@
   "scripts": {
     "check-types:server": "tsc --noEmit --project server.tsconfig.json",
     "check-types:client": "tsc --noEmit --project client.tsconfig.json",
-    "build:server": "npm run check-types:server & esbuild src/server/index.ts --tsconfig=server.tsconfig.json --platform=node --bundle --outfile=build/server.js",
+    "build:server": "npm run check-types:server & esbuild src/server/index.ts --tsconfig=server.tsconfig.json --platform=node --bundle --outfile=build/server.js --external:./node_modules/*",
     "build:client": "npm run check-types:client & esbuild src/client/index.ts --tsconfig=client.tsconfig.json --platform=node --bundle --outfile=build/bundles/client.js",
     "start": "npm run build:client && npm run build:server && node build/server.js"
   },
@@ -16,6 +16,7 @@
   "dependencies": {
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "express-graphql": "^0.12.0",
     "graphql": "^16.3.0",
     "nunjucks": "^3.2.3"
   },
