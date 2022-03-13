@@ -13,11 +13,13 @@ export default class App {
     }
 
     public async run() {
-        nunjucks.configure("src/views", { autoescape: true });
+        nunjucks.configure("src/server/views", { autoescape: true });
 
         this.app.get("/", (req, res) => {
             res.send(nunjucks.render("index.html", {}));
         });
+
+        this.app.use("/bundles", express.static("build/bundles/"));
 
         this.app.listen(this.env.port, () => {
             console.log(`listening on ${this.env.port}...`);

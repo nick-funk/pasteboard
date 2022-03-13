@@ -2,11 +2,13 @@
   "name": "pasteboard",
   "version": "2.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "build/server.js",
   "scripts": {
-    "check-types": "tsc --noEmit --project tsconfig.json",
-    "build": "npm run check-types & esbuild src/index.ts --tsconfig=tsconfig.json --platform=node --bundle --outfile=build/server.js",
-    "start": "npm run build && node build/server.js"
+    "check-types:server": "tsc --noEmit --project server.tsconfig.json",
+    "check-types:client": "tsc --noEmit --project client.tsconfig.json",
+    "build:server": "npm run check-types:server & esbuild src/server/index.ts --tsconfig=server.tsconfig.json --platform=node --bundle --outfile=build/server.js",
+    "build:client": "npm run check-types:client & esbuild src/client/index.ts --tsconfig=client.tsconfig.json --platform=node --bundle --outfile=build/bundles/client.js",
+    "start": "npm run build:client && npm run build:server && node build/server.js"
   },
   "keywords": [],
   "author": "",
