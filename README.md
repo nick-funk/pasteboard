@@ -62,6 +62,8 @@ services:
     restart: unless-stopped
 ```
 
+Latest Docker Release here: https://hub.docker.com/r/nickfunk/pasteboard
+
 ## Two-line `docker` start-up
 
 ```
