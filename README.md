@@ -12,6 +12,31 @@ Create as many boards as you want. Categorize them by topic or by person:
 
 ![Board UI](readme/board.jpg)
 
+## Why wouldn't I just use Discord, Messenger, WhatsApp, or Skype for this?
+
+Do you really want to install a bloated app on every device you own, sign it in, and set it all up?
+
+Every new device you buy, you'll have to:
+
+* Make sure that app is compatible with your device
+* Make sure the app is available on whatever "app store" it uses
+* Download the app
+* Install the app
+* Log into the app
+  * This gets tricky if you use a password manager, now you have to go through the rigamarole of getting the password over to your new device too
+* Find your message to yourself
+* Open the link you wanted to share
+* Done
+
+By contrast, using pasteboard is as simple as:
+
+* Open pasteboard in any browser
+* Click on the board you want
+* See the link you wanted to share with your new device
+* Done
+
+Pasteboard is a lot simpler, and it ALWAYS works with ANY device that has a browser in your home or office.
+
 # Getting Started
 
 ## Docker
