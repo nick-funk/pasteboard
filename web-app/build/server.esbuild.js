@@ -1,6 +1,7 @@
 const esbuild = require("esbuild");
+const nativeNodeModulesPlugin = require("./plugins/nativeNodeModules");
 
-esbuild.buildSync({
+esbuild.build({
   entryPoints: ["src/server/main.ts"],
   bundle: true,
   outdir: "output/server/",
@@ -10,4 +11,5 @@ esbuild.buildSync({
   target: "esnext",
   tsconfig: "server.tsconfig.json",
   external: ["mongodb-client-encryption"],
+  plugins: [nativeNodeModulesPlugin]
 });

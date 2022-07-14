@@ -10,9 +10,9 @@ export class EnvConfig {
   constructor() {
     init();
 
-    this.host = process.env.SERVER_HOST ? process.env.SERVER_HOST : "0.0.0.0";
-    this.port = process.env.SERVER_PORT
-      ? parseInt(process.env.SERVER_PORT)
+    this.host = process.env.HOST ? process.env.HOST : "0.0.0.0";
+    this.port = process.env.PORT
+      ? parseInt(process.env.PORT)
       : 7000;
 
     this.mongoURL = process.env.MONGO_URL ? process.env.MONGO_URL : "mongodb://localhost:27017";
