@@ -15,28 +15,49 @@ interface Props {
 
 export const BoardPage: FunctionComponent<Props> = ({ board }) => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [hasMore, setHasMore] = useState<boolean>(false);
+  const [cursor, setCursor] = useState<string>(new Date().toISOString());
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = useCallback(
+    async (
+      boardID: string,
+      cursor: string,
+      posts: Post[],
+      paginating: boolean
+    ) => {
       const response = await fetch("/api/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          boardID: board.id,
-          after: new Date().toString(),
-          count: 25,
+          boardID,
+          after: cursor,
+          count: 20,
         }),
       });
 
       if (response.ok) {
         const json = await response.json();
-        setPosts(json.posts);
+
+        if (paginating) {
+          setPosts([...posts, ...json.posts]);
+        } else {
+          setPosts(json.posts);
+        }
+
+        setHasMore(json.hasMore);
+        setCursor(json.nextCursor);
+
+        console.log(json);
       }
-    };
-    fetchData().catch(console.error);
-  }, [setPosts, board.id]);
+    },
+    [setPosts, setHasMore, setCursor]
+  );
+
+  useEffect(() => {
+    fetchData(board.id, cursor, posts, false).catch(console.error);
+  }, []);
 
   const onPostCreated = useCallback(
     (post: Post | null) => {
@@ -48,6 +69,14 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
     },
     [posts, setPosts]
   );
+
+  const onLoadMore = useCallback(async () => {
+    if (!hasMore) {
+      return;
+    }
+
+    await fetchData(board.id, cursor, posts, true);
+  }, [hasMore, board.id, cursor, posts]);
 
   return (
     <div>
@@ -66,6 +95,15 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
             </div>
           );
         })}
+        {hasMore && (
+          <>
+            <div className="column">
+              <button className="button is-primary" onClick={onLoadMore}>
+                Load more
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
