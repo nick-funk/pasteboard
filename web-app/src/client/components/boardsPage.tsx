@@ -6,32 +6,45 @@ import React, {
 } from "react";
 
 import { Board } from "../models/board";
-import { BoardList } from "./boardList";
 import { CreateBoardForm } from "./createBoardForm";
 
 export const BoardsPage: FunctionComponent = () => {
   const [boards, setBoards] = useState<Board[]>([]);
+  const [hasMore, setHasMore] = useState<boolean>(false);
+  const [cursor, setCursor] = useState<string>(new Date().toISOString());
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = useCallback(
+    async (cursor: string, boards: Board[], paginating: boolean) => {
       const response = await fetch("/api/boards", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          after: new Date().toString(),
+          after: cursor,
           count: 10,
         }),
       });
 
       if (response.ok) {
         const json = await response.json();
-        setBoards(json.boards);
+
+        if (paginating) {
+          setBoards([...boards, ...json.boards]);
+        } else {
+          setBoards(json.boards);
+        }
+
+        setHasMore(json.hasMore);
+        setCursor(json.nextCursor);
       }
-    };
-    fetchData().catch(console.error);
-  }, [setBoards]);
+    },
+    [setBoards, setHasMore, setCursor]
+  );
+
+  useEffect(() => {
+    fetchData(cursor, boards, false).catch(console.error);
+  }, []);
 
   const onCreateBoard = useCallback(
     (board: Board | null) => {
@@ -44,9 +57,37 @@ export const BoardsPage: FunctionComponent = () => {
     [boards, setBoards]
   );
 
+  const onLoadMore = useCallback(async () => {
+    if (!hasMore) {
+      return;
+    }
+
+    await fetchData(cursor, boards, true);
+  }, [hasMore, cursor, boards]);
+
   return (
     <div>
-      <BoardList boards={boards} />
+      <div className="box">
+        <div className="title">Boards:</div>
+        <div>
+          {boards.map((b) => {
+            return (
+              <div className="column">
+                <a href={`/board/${b.id}`} className="button">
+                  {b.name}
+                </a>
+              </div>
+            );
+          })}
+          {hasMore && (
+            <div className="column">
+              <button className="button is-primary" onClick={onLoadMore}>
+                Load more
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
       <div>
         <CreateBoardForm onCreated={onCreateBoard} />
       </div>

@@ -48,8 +48,6 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
 
         setHasMore(json.hasMore);
         setCursor(json.nextCursor);
-
-        console.log(json);
       }
     },
     [setPosts, setHasMore, setCursor]
@@ -96,13 +94,11 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
           );
         })}
         {hasMore && (
-          <>
-            <div className="column">
-              <button className="button is-primary" onClick={onLoadMore}>
-                Load more
-              </button>
-            </div>
-          </>
+          <div className="column">
+            <button className="button is-primary" onClick={onLoadMore}>
+              Load more
+            </button>
+          </div>
         )}
       </div>
     </div>
