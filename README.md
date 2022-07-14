@@ -65,4 +65,10 @@ services:
       MONGO_URL: mongodb://<YOUR_IP>:27017/pasteboard
       MONGO_DB: pasteboard
     restart: unless-stopped
+  mongo:
+    image: mongo:5.0.6
+    container_name: mongo-pb
+    ports:
+      - 27017:27017
+    restart: unless-stopped
 ```
