@@ -35,3 +35,20 @@ docker build -t nickfunk/pasteboard:<TAG> -f Dockerfile .
 ```
 docker run -d -p 7000:7000 -e MONGO_URL=mongodb://host.docker.internal:27017 --name pb nickfunk/pasteboard:<TAG>
 ```
+
+## Example `docker-compose.yml`
+
+```
+version: "3"
+services:
+  pasteboard:
+    image: nickfunk/pasteboard:<TAG>
+    container_name: pasteboard
+    ports:
+      - 7000:7000
+    environment:
+      PORT: 7000
+      MONGO_URL: mongodb://<YOUR_IP>:27017/pasteboard
+      MONGO_DB: pasteboard
+    restart: unless-stopped
+```
