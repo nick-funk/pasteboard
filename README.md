@@ -1,3 +1,17 @@
+# Intro
+
+Pasteboard is a global copy-paste board for all the devices in your home. Do you love the magic copy-paste that works from your iPhone to your Macbook and wish that it worked with all your other devices? That's what Pasteboard solves.
+
+Now you can simply spin up a Pasteboard container on your laptop or home server, pin the URL to your browser bookmarks and you'll always have somewhere you can drop a YouTube links, Reddit posts, or other URLs so that all the devices in your home or office can immediately access it.
+
+Create as many boards as you want. Categorize them by topic or by person:
+
+![Boards UI](readme/boards.jpg)
+
+ Anyone with access to the paste board can now post and access posts on the available boards:
+
+![Board UI](readme/board.jpg)
+
 # Getting Started
 
 ## Docker
