@@ -6,15 +6,16 @@ import React, {
 } from "react";
 
 import { Board } from "../models/board";
-import { Post } from "../models/post";
+import { Post as PostModel } from "../models/post";
 import { CreatePostForm } from "./createPostForm";
+import { Post } from "./post";
 
 interface Props {
   board: Board;
 }
 
 export const BoardPage: FunctionComponent<Props> = ({ board }) => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostModel[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [cursor, setCursor] = useState<string>(new Date().toISOString());
 
@@ -22,7 +23,7 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
     async (
       boardID: string,
       cursor: string,
-      posts: Post[],
+      posts: PostModel[],
       paginating: boolean
     ) => {
       const response = await fetch("/api/posts", {
@@ -58,7 +59,7 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
   }, []);
 
   const onPostCreated = useCallback(
-    (post: Post | null) => {
+    (post: PostModel | null) => {
       if (!post) {
         return;
       }
@@ -76,6 +77,10 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
     await fetchData(board.id, cursor, posts, true);
   }, [hasMore, board.id, cursor, posts]);
 
+  const onDeletePost = useCallback((id: string) => {
+    setPosts(posts.filter(p => p.id !== id));
+  }, [setPosts, posts]);
+
   return (
     <div>
       <div className="column">
@@ -88,9 +93,7 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
       <div className="column">
         {posts.map((p) => {
           return (
-            <div id={`post-${p.id}`} className="column">
-              <div className="box">{p.body}</div>
-            </div>
+            <Post id={p.id} body={p.body} onDelete={onDeletePost} />
           );
         })}
         {hasMore && (

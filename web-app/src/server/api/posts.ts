@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import Joi from "joi";
 
 import { MongoContext } from "../mongoContext";
-import { Post, createPost, paginatePosts } from "../models/post";
+import { Post, createPost, paginatePosts, deletePost } from "../models/post";
 
 interface CreatePostBody {
   boardID: string;
@@ -38,6 +38,43 @@ const create = (logger: Logger, app: express.Express, mongo: MongoContext) => {
     } catch (err) {
       logger.error(err);
       res.sendStatus(500);
+    }
+  });
+};
+
+interface DeletePostBody {
+  id: string;
+}
+
+const createDeletePost = (
+  logger: Logger,
+  app: express.Express,
+  mongo: MongoContext
+) => {
+  const createSchema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  app.post("/api/post/delete", async (req, res) => {
+    const { error, value } = createSchema.validate(req.body);
+    if (error) {
+      res.status(400).send(error.message);
+      return;
+    }
+
+    const body = value as DeletePostBody;
+
+    try {
+      const result = await deletePost(mongo, body.id);
+
+      if (result) {
+        res.status(200).send({ id: body.id });
+      } else {
+        res.sendStatus(404);
+      }
+    } catch (err) {
+      logger.error(err);
+      res.sendStatus(404);
     }
   });
 };
@@ -91,4 +128,5 @@ export const createPostsAPI = (
 ) => {
   create(logger, app, mongo);
   posts(logger, app, mongo);
+  createDeletePost(logger, app, mongo);
 };

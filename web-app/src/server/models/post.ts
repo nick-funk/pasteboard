@@ -67,3 +67,17 @@ export const paginatePosts = async (
     hasMore,
   };
 };
+
+export const deletePost = async (
+  mongo: MongoContext,
+  id: string
+): Promise<boolean> => {
+  const existingPost = await mongo.posts().findOne({ id });
+  if (!existingPost) {
+    throw new Error("post does not exist");
+  }
+
+  const result = await mongo.posts().deleteOne({ id });
+
+  return result.acknowledged && result.deletedCount > 0;
+};
