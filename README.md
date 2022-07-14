@@ -71,6 +71,8 @@ docker run -d -p 7000:7000 -e MONGO_URL=mongodb://<YOUR_IP>:27017 --restart alwa
 
 # Setting up a dev environment
 
+The following is for developers working on the code (like me, [nick-funk](https://github.com/nick-funk)). You shouldn't need to read any of this if you're just trying to deploy a new Pasteboard container in your home/office!
+
 ## Setting up Docker dependencies
 
 Mongo:
@@ -95,15 +97,15 @@ npm run start
 
 Then you can head to `http://localhost:7000` to test the app.
 
-# Building a new Docker image
+## Building a new Docker image
 
-## Image build command
+### Image build command
 
 ```
 docker build -t nickfunk/pasteboard:<TAG> -f Dockerfile .
 ```
 
-## Running a built image
+### Running a built image
 
 ```
 docker run -d -p 7000:7000 -e MONGO_URL=mongodb://host.docker.internal:27017 --name pb nickfunk/pasteboard:<TAG>
