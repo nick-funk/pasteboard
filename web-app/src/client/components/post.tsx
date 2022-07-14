@@ -27,19 +27,30 @@ export const Post: FunctionComponent<Props> = ({ id, body, onDelete }) => {
   return (
     <div id={`post-${id}`} className="column">
       <div className="box">
-        <div className="columns">
+        <div className="columns" style={{ position: "relative" }}>
           <div className="column is-full">
-            <div style={{ paddingRight: "30px" }}>{body}</div>
-          </div>
-          <div className="column">
-            <button
-              style={{ position: "relative", marginLeft: "-36px" }}
-              className="delete"
-              onClick={onHandleDelete}
+            <div
+              style={{
+                whiteSpace: "pre-wrap",
+                overflow: "hidden",
+                overflowWrap: "break-word",
+                paddingRight: "12px",
+              }}
             >
-              delete
-            </button>
+              {body}
+            </div>
           </div>
+          <button
+            style={{
+              position: "absolute",
+              top: "16px",
+              right: "2px",
+            }}
+            className="delete"
+            onClick={onHandleDelete}
+          >
+            delete
+          </button>
         </div>
       </div>
     </div>
