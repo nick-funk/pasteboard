@@ -2,16 +2,27 @@ import express from "express";
 import Logger from "bunyan";
 import { v4 as uuid } from "uuid";
 import Joi from "joi";
+import { WebSocketServer } from "ws";
 
 import { MongoContext } from "../mongoContext";
-import { Post, createPost, paginatePosts, deletePost } from "../models/post";
+import {
+  Post,
+  createPost,
+  paginatePosts,
+  deletePost as deletePostModel,
+} from "../models/post";
 
 interface CreatePostBody {
   boardID: string;
   body: string;
 }
 
-const create = (logger: Logger, app: express.Express, mongo: MongoContext) => {
+const create = (
+  logger: Logger,
+  app: express.Express,
+  mongo: MongoContext,
+  socketServer: WebSocketServer
+) => {
   const createSchema = Joi.object({
     boardID: Joi.string().required(),
     body: Joi.string().required(),
@@ -35,6 +46,15 @@ const create = (logger: Logger, app: express.Express, mongo: MongoContext) => {
     try {
       const newPost = await createPost(mongo, post);
       res.status(200).send(newPost);
+
+      for (const client of socketServer.clients) {
+        client.send(
+          JSON.stringify({
+            action: "createPost",
+            post: newPost,
+          })
+        );
+      }
     } catch (err) {
       logger.error(err);
       res.sendStatus(500);
@@ -46,7 +66,7 @@ interface DeletePostBody {
   id: string;
 }
 
-const createDeletePost = (
+const deletePost = (
   logger: Logger,
   app: express.Express,
   mongo: MongoContext
@@ -65,7 +85,7 @@ const createDeletePost = (
     const body = value as DeletePostBody;
 
     try {
-      const result = await deletePost(mongo, body.id);
+      const result = await deletePostModel(mongo, body.id);
 
       if (result) {
         res.status(200).send({ id: body.id });
@@ -124,9 +144,10 @@ const posts = (logger: Logger, app: express.Express, mongo: MongoContext) => {
 export const createPostsAPI = (
   logger: Logger,
   app: express.Express,
-  mongo: MongoContext
+  mongo: MongoContext,
+  socketServer: WebSocketServer
 ) => {
-  create(logger, app, mongo);
+  create(logger, app, mongo, socketServer);
   posts(logger, app, mongo);
-  createDeletePost(logger, app, mongo);
+  deletePost(logger, app, mongo);
 };

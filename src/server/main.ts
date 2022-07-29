@@ -1,6 +1,7 @@
 import express from "express";
 import Logger from "bunyan";
 import nunjucks from "nunjucks";
+import { WebSocketServer } from "ws";
 
 import { EnvConfig } from "./envConfig";
 import { MongoContext } from "./mongoContext";
@@ -23,6 +24,11 @@ const run = async () => {
   const mongo = new MongoContext(envConfig.mongoURL, envConfig.mongoDb);
 
   nunjucks.configure("src/server/views", { autoescape: true });
+
+  const socketServer = new WebSocketServer({
+    noServer: true,
+    path: "/subscription"
+  });
 
   const app = express();
   app.use(express.json());
@@ -60,13 +66,19 @@ const run = async () => {
     res.send(view);
   });
 
-  createAPI(logger, app, mongo);
+  createAPI(logger, app, mongo, socketServer);
 
-  app.listen(envConfig.port, envConfig.host, () => {
+  const server = app.listen(envConfig.port, envConfig.host, () => {
     logger.info(
       { port: envConfig.port, host: envConfig.host },
       "server is listening"
     );
+  });
+
+  server.on("upgrade", (req, socket, head) => {
+    socketServer.handleUpgrade(req, socket, head, (webSocket) => {
+      socketServer.emit("connection", webSocket, req);
+    });
   });
 };
 

@@ -2,11 +2,13 @@ import React, {
   FunctionComponent,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
 import { Board } from "../models/board";
 import { Post as PostModel } from "../models/post";
+import { usePostCreatedSubscription } from "../subscription/usePostCreatedSubscription";
 import { CreatePostForm } from "./createPostForm";
 import { Post } from "./post";
 
@@ -19,13 +21,23 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [cursor, setCursor] = useState<string>(new Date().toISOString());
 
+  const insertPost = useCallback(
+    (post: PostModel) => {
+      setPosts((posts) => {
+        if (posts.find((p) => p.id === post.id)) {
+          return posts;
+        } else {
+          return [post, ...posts];
+        }
+      });
+    },
+    [setPosts]
+  );
+
+  usePostCreatedSubscription({ onCreated: insertPost, boardID: board.id });
+
   const fetchData = useCallback(
-    async (
-      boardID: string,
-      cursor: string,
-      posts: PostModel[],
-      paginating: boolean
-    ) => {
+    async (boardID: string, cursor: string, paginating: boolean) => {
       const response = await fetch("/api/posts", {
         method: "POST",
         headers: {
@@ -42,7 +54,7 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
         const json = await response.json();
 
         if (paginating) {
-          setPosts([...posts, ...json.posts]);
+          setPosts((posts) => [...posts, ...json.posts]);
         } else {
           setPosts(json.posts);
         }
@@ -55,7 +67,7 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
   );
 
   useEffect(() => {
-    fetchData(board.id, cursor, posts, false).catch(console.error);
+    fetchData(board.id, cursor, false).catch(console.error);
   }, []);
 
   const onPostCreated = useCallback(
@@ -64,9 +76,9 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
         return;
       }
 
-      setPosts([post, ...posts]);
+      insertPost(post);
     },
-    [posts, setPosts]
+    [insertPost]
   );
 
   const onLoadMore = useCallback(async () => {
@@ -74,12 +86,15 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
       return;
     }
 
-    await fetchData(board.id, cursor, posts, true);
-  }, [hasMore, board.id, cursor, posts]);
+    await fetchData(board.id, cursor, true);
+  }, [hasMore, board.id, cursor]);
 
-  const onDeletePost = useCallback((id: string) => {
-    setPosts(posts.filter(p => p.id !== id));
-  }, [setPosts, posts]);
+  const onDeletePost = useCallback(
+    (id: string) => {
+      setPosts(posts.filter((p) => p.id !== id));
+    },
+    [setPosts, posts]
+  );
 
   return (
     <div>
@@ -92,9 +107,7 @@ export const BoardPage: FunctionComponent<Props> = ({ board }) => {
 
       <div className="column">
         {posts.map((p) => {
-          return (
-            <Post id={p.id} body={p.body} onDelete={onDeletePost} />
-          );
+          return <Post id={p.id} body={p.body} onDelete={onDeletePost} />;
         })}
         {hasMore && (
           <div className="column">
