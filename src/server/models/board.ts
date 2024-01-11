@@ -61,3 +61,21 @@ export const findBoard = async (
   const result = await mongo.boards().findOne({ id });
   return result;
 }
+
+export const deleteBoard = async (
+  mongo: MongoContext,
+  id: string
+): Promise<boolean> => {
+  const existingBoard = await mongo.boards().findOne({ id });
+  if (!existingBoard) {
+    throw new Error("board does not exist");
+  }
+
+  // delete associated posts
+  await mongo.posts().deleteMany({ boardID: id });
+
+  // delete the actual board
+  const result = await mongo.boards().deleteOne({ id });
+
+  return result.acknowledged && result.deletedCount > 0;
+};

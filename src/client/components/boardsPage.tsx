@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useState,
+  MouseEvent,
 } from "react";
 
 import { Board } from "../models/board";
@@ -65,17 +66,56 @@ export const BoardsPage: FunctionComponent = () => {
     await fetchData(cursor, boards, true);
   }, [hasMore, cursor, boards]);
 
+  const onDeleteBoard = useCallback(
+    async (id: string, ev: MouseEvent<HTMLButtonElement>) => {
+      const response = await fetch("/api/board/delete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      });
+
+      if (response.ok) {
+        setBoards(boards.filter((b) => b.id !== id));
+      }
+
+      ev.stopPropagation();
+    },
+    [boards, setBoards]
+  );
+
   return (
     <div>
       <div className="box">
         <div className="title">Boards:</div>
-        <div>
+        <div style={{ maxWidth: "600px" }}>
           {boards.map((b) => {
             return (
               <div className="column">
-                <a href={`/board/${b.id}`} className="button">
-                  {b.name}
-                </a>
+                <div
+                  className="card panel-block"
+                  style={{
+                    display: "flex",
+                    alignContent: "center",
+                    justifyContent: "space-between",
+                    padding: "8px",
+                    paddingLeft: "16px",
+                    margin: "4px",
+                  }}
+                >
+                  <a href={`/board/${b.id}`}>{b.name}</a>
+                  <button
+                    className="delete"
+                    onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                      onDeleteBoard(b.id, e);
+                    }}
+                  >
+                    delete
+                  </button>
+                </div>
               </div>
             );
           })}

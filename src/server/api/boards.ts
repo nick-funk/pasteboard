@@ -4,7 +4,12 @@ import { v4 as uuid } from "uuid";
 import Joi from "joi";
 
 import { MongoContext } from "../mongoContext";
-import { Board, createBoard, paginateBoards } from "../models/board";
+import {
+  Board,
+  createBoard,
+  deleteBoard,
+  paginateBoards,
+} from "../models/board";
 
 interface CreateBoardBody {
   name: string;
@@ -44,11 +49,7 @@ interface BoardsBody {
   count: number;
 }
 
-const boards = (
-  logger: Logger,
-  app: express.Express,
-  mongo: MongoContext
-) => {
+const boards = (logger: Logger, app: express.Express, mongo: MongoContext) => {
   const schema = Joi.object({
     after: Joi.string()
       .optional()
@@ -82,6 +83,43 @@ const boards = (
   });
 };
 
+interface DeleteBoardBody {
+  id: string;
+}
+
+const registerDeleteBoard = (
+  logger: Logger,
+  app: express.Express,
+  mongo: MongoContext
+) => {
+  const schema = Joi.object({
+    id: Joi.string().required(),
+  });
+
+  app.post("/api/board/delete", async (req, res) => {
+    const { error, value } = schema.validate(req.body);
+    if (error) {
+      res.status(400).send(error.message);
+      return;
+    }
+
+    const body = value as DeleteBoardBody;
+
+    try {
+      const result = await deleteBoard(mongo, body.id);
+
+      if (result) {
+        res.status(200).send({ id: body.id });
+      } else {
+        res.sendStatus(404);
+      }
+    } catch (err) {
+      logger.error(err);
+      res.sendStatus(404);
+    }
+  });
+};
+
 export const createBoardsAPI = (
   logger: Logger,
   app: express.Express,
@@ -89,4 +127,5 @@ export const createBoardsAPI = (
 ) => {
   create(logger, app, mongo);
   boards(logger, app, mongo);
+  registerDeleteBoard(logger, app, mongo);
 };
