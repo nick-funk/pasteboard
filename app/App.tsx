@@ -1,7 +1,8 @@
-import { Button, StyleSheet, View } from 'react-native';
-import { Boards } from './components/Boards';
-import { useCallback, useState } from 'react';
-import { BoardPage } from './components/BoardPage';
+import { Button, StyleSheet, View, StatusBar } from "react-native";
+import { Boards } from "./components/Boards";
+import { useCallback, useState } from "react";
+import { BoardPage } from "./components/BoardPage";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
   const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
@@ -15,21 +16,46 @@ export default function App() {
   }, [setSelectedBoard]);
 
   return (
-    <View style={styles.container}>
-      {selectedBoard && <Button onPress={handleGoBack} title="Back" />}
-      {selectedBoard === null && <Boards onSelectBoard={handleSelectBoard} />}
-      {selectedBoard && <>
-        <BoardPage id={selectedBoard} />
-      </>}
+    <View style={styles.root}>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.content}>
+            {selectedBoard === null && <Boards onSelectBoard={handleSelectBoard} />}
+            {selectedBoard && <>
+              <BoardPage id={selectedBoard} />
+            </>}
+          </View>
+          <View style={styles.bottomBar}>
+            {selectedBoard && <Button color={styles.backButton.color} onPress={handleGoBack} title="Back" />}
+          </View>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: "lightgrey",
+    marginTop: StatusBar.currentHeight || 0,
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
+  content: {
+    flexGrow: 1,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    backgroundColor: "#fff",
+  },
+  bottomBar: {
+    height: 35,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    paddingLeft: 16,
+  },
+  backButton: {
+    color: "black",
+  }
 });

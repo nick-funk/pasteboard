@@ -1,5 +1,5 @@
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 
 import { EnvConfig } from "../envConfig";
 import { BoardButton } from "./BoardButton";
@@ -47,10 +47,27 @@ export const Boards: FunctionComponent<Props> = ({ onSelectBoard }) => {
     onSelectBoard(id);
   }, [onSelectBoard]);
 
-  return <View>
-    <Text>Boards</Text>
-    {boards.map((b) => <View key={b.id}>
-      <BoardButton id={b.id} name={b.name} onPress={handleSelectBoard} />
-    </View>)}
+  return <View style={styles.container}>
+    <Text style={styles.title}>Boards</Text>
+    <View>
+      {boards.map((b) =>
+        <BoardButton
+          key={b.id}
+          id={b.id}
+          name={b.name}
+          onPress={handleSelectBoard}
+        />
+      )}
+    </View>
   </View>
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    flex: 1,
+  },
+  title: {
+    fontSize: 18,
+  }
+});

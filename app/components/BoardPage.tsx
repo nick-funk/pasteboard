@@ -1,5 +1,5 @@
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 import { EnvConfig } from "../envConfig";
 
 interface Post {
@@ -46,10 +46,27 @@ export const BoardPage: FunctionComponent<Props> = ({ id }) => {
     void loadPosts();
   }, [loadPosts]);
 
-  return <View>
-    {posts.map((p) => <View key={p.id}>
-        <Text>{p.value}</Text>
-      </View>
-    )}
+  return <View style={styles.container}>
+    <FlatList 
+      style={styles.list} 
+      data={posts}
+      keyExtractor={(item) => item.id}
+      renderItem={(info) => {
+        return <View>
+          <Text>{info.item.value}</Text>
+        </View>
+      }}
+    />
   </View>
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingLeft: 8,
+    paddingRight: 8,
+    flex: 1,
+  },
+  list: {
+    
+  }
+});
