@@ -1,3 +1,4 @@
+import { BoardNotFoundError } from "../../errors";
 import { Board, formatObj } from "../models";
 import { Db } from "../sql";
 
@@ -19,7 +20,7 @@ export class BoardRepository {
     );
   }
 
-  public async createBoard(model: Board) {
+  public async create(model: Board) {
     await this.db.run(
       `INSERT INTO boards (id, name, createdAt) VALUES (?, ?, ?);`,
       [model.id, model.name, model.createdAt]
@@ -49,7 +50,7 @@ export class BoardRepository {
   public async removeByID(id: string) {
     const existing = await this.findByID(id);
     if (!existing) {
-      return null;
+      throw new BoardNotFoundError(id);
     }
 
     await this.db.run(

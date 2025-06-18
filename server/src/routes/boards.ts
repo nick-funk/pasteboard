@@ -2,8 +2,8 @@ import { Router } from "express";
 import Joi from "joi";
 import { v4 as uuid } from "uuid";
 
-import { Board, formatObj } from "../data/models";
 import { DataContext } from "../data/context";
+import { BoardNotFoundError } from "../errors";
 
 const createBoardSchema = Joi.object({
   name: Joi.string().required(),
@@ -21,6 +21,14 @@ interface DeleteBoardSchema {
   id: string;
 }
 
+const getBoardSchema = Joi.object({
+  boardID: Joi.string().required(),
+});
+
+interface GetBoardSchema {
+  boardID: string;
+}
+
 export const createBoardsRouter = (data: DataContext) => {
   const router = Router();
 
@@ -33,7 +41,7 @@ export const createBoardsRouter = (data: DataContext) => {
 
     const { name } = result.value as CreateBoardSchema;
 
-    const board = await data.boards.createBoard({
+    const board = await data.boards.create({
       id: uuid(),
       name,
       createdAt: new Date(),
@@ -57,13 +65,33 @@ export const createBoardsRouter = (data: DataContext) => {
 
     const { id } = result.value as DeleteBoardSchema;
 
-    const board = await data.boards.removeByID(id);
-    if (!board) {
-      res.sendStatus(404);
-      return;
-    }
+    try {
+      const board = await data.boards.removeByID(id);
+      res.status(200).send({ board });
+    } catch (err) {
+      if (err instanceof BoardNotFoundError) {
+        res.status(404).send(err.message);
+        return;
+      }
 
-    res.status(200).send({ board });
+      res.sendStatus(500);
+    }
+  });
+
+  router.get("/:boardID", async (req, res) => {
+      const result = getBoardSchema.validate(req.params);
+      if (result.error) {
+        res.sendStatus(404);
+        return;
+      }
+  
+      const { boardID } = result.value as GetBoardSchema;
+      const posts = await data.posts.postsForBoard(boardID);
+  
+      res.status(200).send({
+        boardID,
+        posts,
+      });
   });
 
   return router;

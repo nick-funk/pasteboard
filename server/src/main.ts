@@ -4,6 +4,7 @@ import { createLogger } from "bunyan";
 import { Db } from "./data/sql";
 import { DataContext } from "./data/context";
 import { createBoardsRouter } from "./routes/boards";
+import { createPostsRouter } from "./routes/posts";
 
 const run = async () => {
   const envConfig = new EnvConfig();
@@ -22,6 +23,7 @@ const run = async () => {
   });
 
   app.use("/boards", createBoardsRouter(data));
+  app.use("/posts", createPostsRouter(data));
 
   app.listen(envConfig.port, envConfig.host, () => {
     logger.info({ port: envConfig.port, host: envConfig.host }, "listening")

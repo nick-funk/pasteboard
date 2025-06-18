@@ -1,26 +1,21 @@
 import { BoardRepository } from "./repositories/boards";
+import { PostsRepository } from "./repositories/posts";
 import { Db } from "./sql";
 
 export class DataContext {
   public readonly db: Db;
   public readonly boards: BoardRepository;
+  public readonly posts: PostsRepository;
 
   constructor(db: Db) {
     this.db = db;
 
     this.boards = new BoardRepository(this.db);
+    this.posts = new PostsRepository(this.db, this.boards);
   }
 
   public async init() {
     await this.boards.seed();
-    await this.db.run(`
-      CREATE TABLE IF NOT EXISTS post 
-      (
-        id TEXT PRIMARY KEY NOT NULL,
-        boardID TEXT NOT NULL,
-        createdAt DATETIME,
-        value TEXT,
-      );`
-    );
+    await this.posts.seed();
   }
 }

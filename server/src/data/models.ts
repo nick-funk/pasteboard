@@ -4,6 +4,13 @@ export interface Board {
   createdAt: Date;
 }
 
+export interface Post {
+  id: string;
+  boardID: string;
+  createdAt: Date;
+  value: string;
+}
+
 export const formatObj = (obj: any) => {
   const newObj = { ...obj };
 
