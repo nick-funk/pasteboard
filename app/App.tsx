@@ -1,13 +1,21 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Boards } from './components/Boards';
+import { useCallback, useState } from 'react';
+import { BoardPage } from './components/BoardPage';
 
 export default function App() {
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+  const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
+
+  const handleSelectBoard = useCallback((id: string) => {
+    setSelectedBoard(id);
+  }, [setSelectedBoard]);
 
   return (
     <View style={styles.container}>
-      <Text>{apiUrl}</Text>
-      <StatusBar style="auto" />
+      {selectedBoard === null && <Boards onSelectBoard={handleSelectBoard} />}
+      {selectedBoard && <>
+        <BoardPage id={selectedBoard} />
+      </>}
     </View>
   );
 }
