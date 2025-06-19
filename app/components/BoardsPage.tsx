@@ -1,8 +1,8 @@
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 
-import { EnvConfig } from "../envConfig";
 import { NavPage, useNav } from "../contexts/navContext";
+import { useSource } from "../contexts/sourceContext";
 
 interface Board {
   id: string;
@@ -35,11 +35,16 @@ export const BoardButton: FunctionComponent<BoartButtonProps> = ({ id, name, onP
 
 export const BoardsPage: FunctionComponent = () => {
   const { setNavState } = useNav();
+  const { source } = useSource();
+
   const [boards, setBoards] = useState<Board[]>([]);
 
   const loadBoards = useCallback(async () => {
-    const config = EnvConfig.instance();
-    const url = new URL("/boards", config.apiURL);
+    if (!source) {
+      return;
+    }
+
+    const url = new URL("/boards", source.url);
     const response = await fetch(
       url.toString()
     );
@@ -54,7 +59,7 @@ export const BoardsPage: FunctionComponent = () => {
     }
 
     setBoards(json.boards);
-  }, [setBoards]);
+  }, [setBoards, source]);
 
   useEffect(() => {
     void loadBoards();

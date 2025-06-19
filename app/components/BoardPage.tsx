@@ -1,7 +1,7 @@
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import { EnvConfig } from "../envConfig";
 import { useNav } from "../contexts/navContext";
+import { useSource } from "../contexts/sourceContext";
 
 interface Post {
   id: string;
@@ -16,14 +16,18 @@ interface GetPostsResponse {
 
 export const BoardPage: FunctionComponent = () => {
   const { state: { params }} = useNav();
-  const id = params.Board?.id ?? "";
+  const { source } = useSource();
+
+  const id = params.Board?.id;
 
   const [posts, setPosts] = useState<Post[]>([]);
 
   const loadPosts = useCallback(async () => {
-    const config = EnvConfig.instance();
-    const url = new URL(`/boards/${id}`, config.apiURL);
+    if (!id || !source) {
+      return;
+    }
 
+    const url = new URL(`/boards/${id}`, source.url);
     const response = await fetch(
       url.toString()
     );

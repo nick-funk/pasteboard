@@ -1,17 +1,20 @@
 import { StyleSheet, View, StatusBar } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
-import { NavContextProvider, NavPage } from "./contexts/navContext";
+import { NavContextProvider } from "./contexts/navContext";
 import { MainNav } from "./components/MainNav";
+import { SourceContextProvider } from "./contexts/sourceContext";
 
 export default function App() {
   return (
     <View style={styles.root}>
-      <NavContextProvider initialValue={{ page: NavPage.Boards, params: {} }}>
-        <SafeAreaProvider>
-          <SafeAreaView style={styles.container}>
-            <MainNav />
-          </SafeAreaView>
-        </SafeAreaProvider>
+      <NavContextProvider>
+        <SourceContextProvider>
+          <SafeAreaProvider>
+            <SafeAreaView style={styles.container}>
+              <MainNav />
+            </SafeAreaView>
+          </SafeAreaProvider>
+        </SourceContextProvider>
       </NavContextProvider>
     </View>
   );
