@@ -2,6 +2,7 @@ import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
 
 import { EnvConfig } from "../envConfig";
+import { NavPage, useNav } from "../contexts/navContext";
 
 interface Board {
   id: string;
@@ -32,11 +33,8 @@ export const BoardButton: FunctionComponent<BoartButtonProps> = ({ id, name, onP
   </View>
 }
 
-interface Props {
-  onSelectBoard: (id: string) => void;
-}
-
-export const BoardsPage: FunctionComponent<Props> = ({ onSelectBoard }) => {
+export const BoardsPage: FunctionComponent = () => {
+  const { setNavState } = useNav();
   const [boards, setBoards] = useState<Board[]>([]);
 
   const loadBoards = useCallback(async () => {
@@ -63,8 +61,8 @@ export const BoardsPage: FunctionComponent<Props> = ({ onSelectBoard }) => {
   }, [loadBoards]);
 
   const handleSelectBoard = useCallback((id: string) => {
-    onSelectBoard(id);
-  }, [onSelectBoard]);
+    setNavState(NavPage.Board, { Board: { id }});
+  }, [setNavState]);
 
   return <View style={styles.container}>
     <Text style={styles.title}>Boards</Text>

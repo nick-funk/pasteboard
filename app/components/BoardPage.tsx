@@ -1,6 +1,7 @@
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { EnvConfig } from "../envConfig";
+import { useNav } from "../contexts/navContext";
 
 interface Post {
   id: string;
@@ -13,17 +14,15 @@ interface GetPostsResponse {
   posts: Post[];
 }
 
-interface Props {
-  id: string;
-}
+export const BoardPage: FunctionComponent = () => {
+  const { state: { params }} = useNav();
+  const id = params.Board?.id ?? "";
 
-export const BoardPage: FunctionComponent<Props> = ({ id }) => {
   const [posts, setPosts] = useState<Post[]>([]);
 
   const loadPosts = useCallback(async () => {
     const config = EnvConfig.instance();
     const url = new URL(`/boards/${id}`, config.apiURL);
-    console.log(url);
 
     const response = await fetch(
       url.toString()
@@ -39,16 +38,14 @@ export const BoardPage: FunctionComponent<Props> = ({ id }) => {
     }
 
     setPosts(json.posts);
-  }, [setPosts]);
+  }, [setPosts, id]);
 
   useEffect(() => {
-    console.log("load posts");
     void loadPosts();
   }, [loadPosts]);
 
   return <View style={styles.container}>
-    <FlatList 
-      style={styles.list} 
+    <FlatList
       data={posts}
       keyExtractor={(item) => item.id}
       renderItem={(info) => {
@@ -66,7 +63,4 @@ const styles = StyleSheet.create({
     paddingRight: 8,
     flex: 1,
   },
-  list: {
-    
-  }
 });

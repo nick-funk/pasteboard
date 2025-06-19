@@ -1,35 +1,18 @@
-import { Button, StyleSheet, View, StatusBar } from "react-native";
-import { BoardsPage } from "./components/BoardsPage";
-import { useCallback, useState } from "react";
-import { BoardPage } from "./components/BoardPage";
+import { StyleSheet, View, StatusBar } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import { NavContextProvider, NavPage } from "./contexts/navContext";
+import { MainNav } from "./components/MainNav";
 
 export default function App() {
-  const [selectedBoard, setSelectedBoard] = useState<string | null>(null);
-
-  const handleSelectBoard = useCallback((id: string) => {
-    setSelectedBoard(id);
-  }, [setSelectedBoard]);
-
-  const handleGoBack = useCallback(() => {
-    setSelectedBoard(null);
-  }, [setSelectedBoard]);
-
   return (
     <View style={styles.root}>
-      <SafeAreaProvider>
-        <SafeAreaView style={styles.container}>
-          <View style={styles.content}>
-            {selectedBoard === null && <BoardsPage onSelectBoard={handleSelectBoard} />}
-            {selectedBoard && <>
-              <BoardPage id={selectedBoard} />
-            </>}
-          </View>
-          <View style={styles.bottomBar}>
-            {selectedBoard && <Button color={styles.backButton.color} onPress={handleGoBack} title="Back" />}
-          </View>
-        </SafeAreaView>
-      </SafeAreaProvider>
+      <NavContextProvider initialValue={{ page: NavPage.Boards, params: {} }}>
+        <SafeAreaProvider>
+          <SafeAreaView style={styles.container}>
+            <MainNav />
+          </SafeAreaView>
+        </SafeAreaProvider>
+      </NavContextProvider>
     </View>
   );
 }
@@ -43,19 +26,4 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
-    flexGrow: 1,
-    alignItems: "flex-start",
-    justifyContent: "flex-start",
-    backgroundColor: "#fff",
-  },
-  bottomBar: {
-    height: 35,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    paddingLeft: 16,
-  },
-  backButton: {
-    color: "black",
-  }
 });
