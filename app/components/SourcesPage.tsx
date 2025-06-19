@@ -1,7 +1,7 @@
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { View, Text, FlatList, Button } from "react-native";
 import { NavPage, useNav } from "../contexts/navContext";
-import { Source, useSource } from "../contexts/sourceContext";
+import { loadCurrentSource, Source, useSource } from "../contexts/sourceContext";
 
 interface SourceButtonProps {
   source: Source;
@@ -23,14 +23,21 @@ export const SourcesPage: FunctionComponent = () => {
   const [sources, setSources] = useState<Source[]>([]);
 
   const loadSources = useCallback(async () => {
+    const previousSource = await loadCurrentSource();
+    if (previousSource) {
+      setSource(previousSource);
+      setNavState(NavPage.Boards, {}, true);
+      return;
+    }
+
     setSources([
       {
         id: "localhost",
         name: "localhost",
         url: "http://localhost:3000",
       }
-    ]);
-  }, [setSources]);
+    ])
+  }, [setSources, setSource, setNavState]);
 
   useEffect(() => {
     loadSources();
@@ -38,7 +45,7 @@ export const SourcesPage: FunctionComponent = () => {
 
   const handleOnPress = useCallback((source: Source) => {
     setSource(source);
-    setNavState(NavPage.Boards, {});
+    setNavState(NavPage.Boards, {}, true);
   }, [setNavState]);
 
   return <View>

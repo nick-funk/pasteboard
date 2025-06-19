@@ -1,4 +1,5 @@
-import { createContext, FunctionComponent, ReactNode, useCallback, useContext, useState } from "react";
+import { createContext, FunctionComponent, ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { loadValue, storeValue } from "../storage";
 
 export interface Source {
   id: string;
@@ -20,17 +21,41 @@ const emptySource: Source = {
 const SourceContext = createContext<SourceContextData>({ source: emptySource, setSource: () => {} });
 
 interface SourceContextProviderProps {
-  initialValue?: Source;
   children?: ReactNode;
 }
 
+export const loadCurrentSource = async () => {
+  const value = await loadValue("currentSource");
+  if (!value) {
+    return null;
+  }
+
+
+  const loadedSource = JSON.parse(value) as Source;
+  return loadedSource
+}
+
 export const SourceContextProvider: FunctionComponent<SourceContextProviderProps> =
-  ({ initialValue, children }) => {
-    const [source, setSource] = useState<Source>(initialValue ?? emptySource);
+  ({ children }) => {
+    const [source, setSource] = useState<Source>(emptySource);
 
     const handleSetSource = useCallback((source: Source) => {
       setSource(source);
-    }, [setSource]);
+      storeValue("currentSource", JSON.stringify(source));
+    }, [setSource, storeValue]);
+
+    const loadSource = useCallback(async () => {
+      const loadedSource = await loadCurrentSource();
+      if (!loadedSource) {
+        return;
+      }
+
+      setSource(loadedSource);
+    }, [loadValue, setSource]);
+
+    useEffect(() => {
+      void loadSource();
+    }, [loadSource]);
 
     return <SourceContext.Provider value={{ source, setSource: handleSetSource }}>
       {children}

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button } from "react-native";
 
 import { NavPage, useNav } from "../contexts/navContext";
 import { useSource } from "../contexts/sourceContext";
+import { clearValue, storeValue } from "../storage";
 
 interface Board {
   id: string;
@@ -69,6 +70,11 @@ export const BoardsPage: FunctionComponent = () => {
     setNavState(NavPage.Board, { Board: { id }});
   }, [setNavState]);
 
+  const handleViewSources = useCallback(async () => {
+    await clearValue("currentSource");
+    setNavState(NavPage.Sources, {}, true);
+  }, [setNavState, clearValue]);
+
   return <View style={styles.container}>
     <Text style={styles.title}>Boards</Text>
     <View>
@@ -81,6 +87,7 @@ export const BoardsPage: FunctionComponent = () => {
         />
       )}
     </View>
+    <Button title="Sources" onPress={handleViewSources} />
   </View>
 }
 

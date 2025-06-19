@@ -23,7 +23,7 @@ const defaultNavState = { page: NavPage.Sources, params: {} };
 
 export interface NavContextData {
   state: NavState;
-  setNavState: (page: NavPage, params: NavParams) => void;
+  setNavState: (page: NavPage, params: NavParams, clearHistory?: boolean) => void;
   canGoBack?: boolean;
   goBack: () => void;
 }
@@ -51,13 +51,14 @@ export const NavContextProvider: FunctionComponent<NavContextProviderProps> =
     const [stateStack, setStateStack] = useState<NavState[]>([state]);
     const [canGoBack, setCanGoBack] = useState<boolean>(false);
 
-    const handleSetState = useCallback((page: NavPage, params?: NavParams) => {
-      const effectiveParams = params ?? defaultNavState.params;
-      const newState = { page, params: effectiveParams };
+    const handleSetState = useCallback(
+      (page: NavPage, params?: NavParams, clearHistory?: boolean) => {
+        const effectiveParams = params ?? defaultNavState.params;
+        const newState = { page, params: effectiveParams };
 
-      setState(newState);
-      setStateStack((value) => [newState, ...value]);
-    }, [setState, setStateStack]);
+        setState(newState);
+        setStateStack((value) => clearHistory ? [newState] : [newState, ...value]);
+      }, [setState, setStateStack]);
 
     const handleGoBack = useCallback(() => {
       if (stateStack.length <= 1) {
