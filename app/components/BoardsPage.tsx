@@ -1,8 +1,7 @@
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
 
 import { EnvConfig } from "../envConfig";
-import { BoardButton } from "./BoardButton";
 
 interface Board {
   id: string;
@@ -13,11 +12,31 @@ interface GetBoardsResponse {
   boards: Board[];
 }
 
+interface BoartButtonProps {
+  id: string;
+  name: string;
+  onPress?: (id: string) => void;
+}
+
+export const BoardButton: FunctionComponent<BoartButtonProps> = ({ id, name, onPress }) => {
+  const handlePress = useCallback(() => {
+    if (!onPress) {
+      return;
+    }
+
+    onPress(id);
+  }, [id, onPress]);
+
+  return <View>
+    <Button onPress={handlePress} title={name} />
+  </View>
+}
+
 interface Props {
   onSelectBoard: (id: string) => void;
 }
 
-export const Boards: FunctionComponent<Props> = ({ onSelectBoard }) => {
+export const BoardsPage: FunctionComponent<Props> = ({ onSelectBoard }) => {
   const [boards, setBoards] = useState<Board[]>([]);
 
   const loadBoards = useCallback(async () => {

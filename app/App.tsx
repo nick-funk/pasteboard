@@ -1,5 +1,5 @@
 import { Button, StyleSheet, View, StatusBar } from "react-native";
-import { Boards } from "./components/Boards";
+import { BoardsPage } from "./components/BoardsPage";
 import { useCallback, useState } from "react";
 import { BoardPage } from "./components/BoardPage";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -20,7 +20,7 @@ export default function App() {
       <SafeAreaProvider>
         <SafeAreaView style={styles.container}>
           <View style={styles.content}>
-            {selectedBoard === null && <Boards onSelectBoard={handleSelectBoard} />}
+            {selectedBoard === null && <BoardsPage onSelectBoard={handleSelectBoard} />}
             {selectedBoard && <>
               <BoardPage id={selectedBoard} />
             </>}
