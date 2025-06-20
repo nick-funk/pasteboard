@@ -32,6 +32,14 @@ interface PersistedSources {
   sources: Source[];
 }
 
+export const storeSources = async (sources: Source[]) => {
+  await storeValue(SourcesKey, JSON.stringify({
+    sources
+  }));
+
+  return await getSources();
+}
+
 export const getSources = async () => {
   const rawValue = await loadValue(SourcesKey);
   if (!rawValue) {
