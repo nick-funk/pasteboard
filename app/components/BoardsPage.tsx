@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Button } from "react-native";
 
 import { NavPage, useNav } from "../contexts/navContext";
 import { useSource } from "../contexts/sourceContext";
-import { clearValue, storeValue } from "../storage";
+import { clearValue, CurrentSourceKey, storeValue } from "../storage";
 
 interface Board {
   id: string;
@@ -67,11 +67,11 @@ export const BoardsPage: FunctionComponent = () => {
   }, [loadBoards]);
 
   const handleSelectBoard = useCallback((id: string) => {
-    setNavState(NavPage.Board, { Board: { id }});
+    setNavState(NavPage.Board, { Board: { id } });
   }, [setNavState]);
 
   const handleViewSources = useCallback(async () => {
-    await clearValue("currentSource");
+    await clearValue(CurrentSourceKey);
     setNavState(NavPage.Sources, {}, true);
   }, [setNavState, clearValue]);
 

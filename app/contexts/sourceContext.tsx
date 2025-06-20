@@ -1,5 +1,5 @@
 import { createContext, FunctionComponent, ReactNode, useCallback, useContext, useEffect, useState } from "react";
-import { loadValue, storeValue } from "../storage";
+import { CurrentSourceKey, loadValue, storeValue } from "../storage";
 
 export interface Source {
   id: string;
@@ -18,14 +18,14 @@ const emptySource: Source = {
   url: "",
 }
 
-const SourceContext = createContext<SourceContextData>({ source: emptySource, setSource: () => {} });
+const SourceContext = createContext<SourceContextData>({ source: emptySource, setSource: () => { } });
 
 interface SourceContextProviderProps {
   children?: ReactNode;
 }
 
 export const loadCurrentSource = async () => {
-  const value = await loadValue("currentSource");
+  const value = await loadValue(CurrentSourceKey);
   if (!value) {
     return null;
   }
@@ -41,7 +41,7 @@ export const SourceContextProvider: FunctionComponent<SourceContextProviderProps
 
     const handleSetSource = useCallback((source: Source) => {
       setSource(source);
-      storeValue("currentSource", JSON.stringify(source));
+      storeValue(CurrentSourceKey, JSON.stringify(source));
     }, [setSource, storeValue]);
 
     const loadSource = useCallback(async () => {

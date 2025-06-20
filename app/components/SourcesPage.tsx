@@ -1,7 +1,8 @@
 import { FunctionComponent, useCallback, useEffect, useState } from "react";
-import { View, Text, FlatList, Button } from "react-native";
+import { View, Text, FlatList, Button, StyleSheet } from "react-native";
 import { NavPage, useNav } from "../contexts/navContext";
 import { loadCurrentSource, Source, useSource } from "../contexts/sourceContext";
+import { getSources } from "../storage";
 
 interface SourceButtonProps {
   source: Source;
@@ -13,8 +14,21 @@ export const SourceButton: FunctionComponent<SourceButtonProps> = ({ source, onP
     onPress(source);
   }, [source, onPress]);
 
-  return <Button title={source.name} onPress={handleOnPress} />
+  return (
+    <View style={buttonStyles.sourceButton}>
+      <Button color={buttonStyles.sourceButton.color} title={source.name} onPress={handleOnPress} />
+    </View>
+  );
 }
+
+const buttonStyles = StyleSheet.create({
+  sourceButton: {
+    backgroundColor: "lightgrey",
+    color: "black",
+    borderRadius: 4,
+    padding: 8,
+  }
+});
 
 export const SourcesPage: FunctionComponent = () => {
   const { setNavState } = useNav();
@@ -30,13 +44,7 @@ export const SourcesPage: FunctionComponent = () => {
       return;
     }
 
-    setSources([
-      {
-        id: "localhost",
-        name: "localhost",
-        url: "http://localhost:3000",
-      }
-    ])
+    setSources(await getSources());
   }, [setSources, setSource, setNavState]);
 
   useEffect(() => {
@@ -48,6 +56,10 @@ export const SourcesPage: FunctionComponent = () => {
     setNavState(NavPage.Boards, {}, true);
   }, [setNavState]);
 
+  const handlOnAddNew = useCallback(() => {
+    setNavState(NavPage.AddNewSource, {});
+  }, []);
+
   return <View>
     <Text>Sources</Text>
     <FlatList
@@ -56,5 +68,6 @@ export const SourcesPage: FunctionComponent = () => {
         return <SourceButton onPress={handleOnPress} source={info.item} />
       }}
     />
+    <Button title="Add new source" onPress={handlOnAddNew} />
   </View>
 }

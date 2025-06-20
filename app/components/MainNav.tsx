@@ -4,6 +4,7 @@ import { SourcesPage } from "./SourcesPage";
 import { BoardsPage } from "./BoardsPage";
 import { BoardPage } from "./BoardPage";
 import { Button, StyleSheet, View } from "react-native";
+import { AddNewSourcePage } from "./AddNewSourcePage";
 
 export const MainNav: FunctionComponent = () => {
   const { state: { page }, canGoBack, goBack } = useNav();
@@ -21,6 +22,7 @@ export const MainNav: FunctionComponent = () => {
       {page === NavPage.Sources && <SourcesPage />}
       {page === NavPage.Boards && <BoardsPage />}
       {page === NavPage.Board && <BoardPage />}
+      {page === NavPage.AddNewSource && <AddNewSourcePage />}
     </View>
     {canGoBack && <Button onPress={handleGoBack} title="Back" />}
   </>

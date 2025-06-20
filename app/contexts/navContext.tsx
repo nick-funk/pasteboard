@@ -4,6 +4,7 @@ export enum NavPage {
   Sources = "Sources",
   Boards = "Boards",
   Board = "Board",
+  AddNewSource = "AddNewSource",
 };
 
 export interface NavParams {
@@ -12,6 +13,7 @@ export interface NavParams {
   Board?: {
     id: string;
   }
+  AddNewSource?: {},
 }
 
 export interface NavState {
