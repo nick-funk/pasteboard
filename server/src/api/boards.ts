@@ -48,6 +48,32 @@ export const createBoardsRoute = (data: DataContext) => {
     }
   });
 
+  route.get("/:id/items", (req, res) => {
+    try {
+      const payload = GetSchema.parse(req.params);
+
+      const existing = data.boards.findById(payload.id);
+      if (!existing) {
+        res.status(404).send({ message: BoardNotFound })
+      }
+
+      const items = data.boardItems.all(payload.id);
+
+      return res.status(200).send({
+        board: existing,
+        items,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).send({
+          issues: err.issues,
+        });
+      }
+
+      return res.status(500).send({ message: SomethingBadHappened });
+    }
+  });
+
   route.post("/create", (req, res) => {
     try {
       const payload = CreateSchema.parse(req.body);

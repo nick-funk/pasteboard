@@ -6,6 +6,7 @@ import { Config } from "./config";
 import { SqlContext } from "./data/sql";
 import { DataContext } from "./data/context";
 import { createBoardsRoute } from "./api/boards";
+import { createBoardItemsRoute } from "./api/boardItems";
 
 const run = async () => {
   const logger = pino().child({ name: "pb-serve" });
@@ -19,6 +20,7 @@ const run = async () => {
   app.use(express.json({ limit: "5mb" }));
 
   app.use("/boards", createBoardsRoute(data));
+  app.use("/boardItems", createBoardItemsRoute(data));
 
   app.get("/", (req, res) => {
     return res.status(200).send("pasteboard");

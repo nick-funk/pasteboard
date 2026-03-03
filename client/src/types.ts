@@ -3,8 +3,9 @@ export interface Board {
   name: string;
 }
 
-export interface Post {
+export interface BoardItem {
   id: string;
   boardId: string;
   body: string;
+  createdAt: string;
 }
