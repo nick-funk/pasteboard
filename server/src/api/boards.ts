@@ -1,0 +1,43 @@
+import * as z from "zod";
+
+import { Router } from "express";
+import { DataContext } from "../data/context";
+
+const CreateSchema = z.object({
+  name: z.string().min(3).nonoptional(),
+});
+
+export const createBoardsRoute = (data: DataContext) => {
+  const route = Router();
+
+  route.get("/", (req, res) => {
+    return res.status(200).send({
+      boards: data.boards.all(),
+    });
+  });
+
+  route.post("/create", (req, res) => {
+    try {
+      const payload = CreateSchema.parse(req.body);
+
+      const board = data.boards.create(payload.name);
+      if (!board) {
+        return res.status(500).send({ message: "failed to create board." });
+      }
+
+      return res.status(200).send({
+        board
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).send({
+          issues: err.issues,
+        });
+      }
+
+      return res.status(500).send({ message: "Something bad happened." });
+    }
+  });
+
+  return route;
+}
