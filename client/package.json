@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -f -r ./dist",
+    "package": "VITE_SERVER_URL=/ tsc -b && vite build",
+    "build": "npm run clean && npm run package"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

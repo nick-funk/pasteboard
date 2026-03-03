@@ -25,7 +25,7 @@ interface ItemProps {
 
 export const Item: FunctionComponent<ItemProps> = ({ item, onDelete }) => {
   const handleDelete = useCallback(async () => {
-    const url = new URL("/boardItems/delete", Config.serverUrl);
+    const url = new URL("/api/boardItems/delete", Config.serverUrl);
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -62,7 +62,7 @@ export const BoardPage: FunctionComponent = () => {
   const [items, setItems] = useState<BoardItem[]>([]);
 
   const loadBoard = useCallback(async () => {
-    const url = new URL(`/boards/${id}`, Config.serverUrl);
+    const url = new URL(`/api/boards/${id}`, Config.serverUrl);
     const response = await fetch(url, {
       method: "GET",
     });
@@ -80,7 +80,7 @@ export const BoardPage: FunctionComponent = () => {
   }, [id]);
 
   const loadItems = useCallback(async () => {
-    const url = new URL(`/boards/${id}/items`, Config.serverUrl);
+    const url = new URL(`/api/boards/${id}/items`, Config.serverUrl);
     const response = await fetch(url, {
       method: "GET",
     });

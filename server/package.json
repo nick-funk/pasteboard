@@ -4,9 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc --project tsconfig.json",
-    "start": "npm run build && node ./dist/main.js",
-    "dev": "NODE_ENV=development nodemon --exec \"npm run start\""
+    "build:dev": "tsc --project tsconfig.json",
+    "start:dev": "npm run build:dev && node ./dist/main.js",
+    "dev": "NODE_ENV=development nodemon --exec \"npm run start:dev\"",
+    "clean:client": "rm -f -r ./client",
+    "build:client": "cd ../client && npm run build",
+    "copy:client": "cp -r ../client/dist ./client",
+    "package:client": "npm run clean:client && npm run build:client && npm run copy:client",
+    "build": "npm run package:client && tsc --project tsconfig.json",
+    "start": "npm run build && node ./dist/main.js"
   },
   "keywords": [],
   "author": "",

@@ -43,7 +43,7 @@ export const CreateItemForm: FunctionComponent<Props> = ({
 
   const onSubmit: SubmitHandler<FormValues> = useCallback(
     async (data) => {
-      const url = new URL("/boardItems/create", Config.serverUrl);
+      const url = new URL("/api/boardItems/create", Config.serverUrl);
       const response = await fetch(url, {
         method: "POST",
         headers: {

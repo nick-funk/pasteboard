@@ -11,8 +11,6 @@ import { EditBoardPage } from "./routes/EditBoard";
 const Nav: FunctionComponent = () => {
   const location = useLocation();
 
-  console.log(location, location.pathname.startsWith("/boards"));
-
   return (
     <nav className="navbar" role="navigation" aria-label="main navigation">
       <div id="main" className="navbar-menu">

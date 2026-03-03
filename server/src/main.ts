@@ -7,6 +7,7 @@ import { SqlContext } from "./data/sql";
 import { DataContext } from "./data/context";
 import { createBoardsRoute } from "./api/boards";
 import { createBoardItemsRoute } from "./api/boardItems";
+import { createApiRoute } from "./api/api";
 
 const run = async () => {
   const logger = pino().child({ name: "pb-serve" });
@@ -19,12 +20,14 @@ const run = async () => {
   app.use(cors());
   app.use(express.json({ limit: "5mb" }));
 
-  app.use("/boards", createBoardsRoute(data));
-  app.use("/boardItems", createBoardItemsRoute(data));
+  app.use("/api", createApiRoute(data));
 
-  app.get("/", (req, res) => {
-    return res.status(200).send("pasteboard");
-  });
+  app.use("/", express.static("client/"));
+  app.use("/boards", express.static("client/"));
+  app.use("/board", express.static("client/"));
+  app.use("/board/:id", express.static("client/"));
+  app.use("/board/:id/edit", express.static("client/"));
+  app.use("/board/create", express.static("client/"));
 
   app.listen(config.port, config.host, () => {
     logger.info(

@@ -38,7 +38,7 @@ export const CreateBoardPage: FunctionComponent = () => {
   const [message, setMessage] = useState<MessageState | null>(null);
 
   const onSubmit: SubmitHandler<FormValues> = useCallback(async (data) => {
-    const url = new URL("/boards/create", Config.serverUrl);
+    const url = new URL("/api/boards/create", Config.serverUrl);
     const response = await fetch(url, {
       method: "POST",
       headers: {

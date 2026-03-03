@@ -32,7 +32,7 @@ export const BoardItem: FunctionComponent<BoardItemProps> = ({
   }, []);
 
   const handleDelete = useCallback(async () => {
-    const url = new URL("/boards/delete", Config.serverUrl);
+    const url = new URL("/api/boards/delete", Config.serverUrl);
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -107,7 +107,7 @@ export const BoardsPage: FunctionComponent = () => {
   const [boards, setBoards] = useState<Board[]>([]);
 
   const loadBoards = useCallback(async () => {
-    const url = new URL("/boards", Config.serverUrl);
+    const url = new URL("/api/boards", Config.serverUrl);
     const response = await fetch(url, { method: "GET" });
     if (!response.ok) {
       return;
