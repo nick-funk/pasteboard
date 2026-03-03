@@ -1,0 +1,9 @@
+.git
+bruno
+node_modules
+
+client/dist
+
+server/client
+server/db
+server/dist

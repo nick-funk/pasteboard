@@ -22,12 +22,14 @@ const run = async () => {
 
   app.use("/api", createApiRoute(data));
 
-  app.use("/", express.static("client/"));
-  app.use("/boards", express.static("client/"));
-  app.use("/board", express.static("client/"));
-  app.use("/board/:id", express.static("client/"));
-  app.use("/board/:id/edit", express.static("client/"));
-  app.use("/board/create", express.static("client/"));
+  const staticAssets = express.static("client/");
+
+  app.use("/", staticAssets);
+  app.use("/boards", staticAssets);
+  app.use("/board", staticAssets);
+  app.use("/board/:id", staticAssets);
+  app.use("/board/:id/edit", staticAssets);
+  app.use("/board/create", staticAssets);
 
   app.listen(config.port, config.host, () => {
     logger.info(
