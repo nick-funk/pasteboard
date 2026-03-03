@@ -53,6 +53,15 @@ export class BoardsRepository {
     return this.findById(id);
   }
 
+  public delete(id: string) {
+    const result = this.sql.insert(
+      `DELETE FROM boards WHERE id = ?`,
+      [id]
+    );
+
+    return result.changes > 0;
+  }
+
   public all(): Board[] {
     const results = this.sql.select(
       `SELECT * FROM boards;`

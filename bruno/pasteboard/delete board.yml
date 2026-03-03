@@ -1,0 +1,26 @@
+info:
+  name: delete board
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:8493/boards/delete
+  body:
+    type: json
+    data: |-
+      {
+        "id": "{{boardId}}"
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: boardId
+      value: e3bca70c-96b8-4ac3-a63b-959ccfc45233
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
