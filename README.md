@@ -14,7 +14,7 @@ npm install
 npm run dev
 ```
 
-Open up `http://localhost:5173` and you should see the an empty boards page.
+Open up `http://localhost:5173` and you should see an empty boards page.
 
 # Docker builds
 
