@@ -1,5 +1,6 @@
 import pino from "pino";
 import express from "express";
+import cors from "cors";
 
 import { Config } from "./config";
 import { SqlContext } from "./data/sql";
@@ -14,6 +15,7 @@ const run = async () => {
   const data = new DataContext(sql);
 
   const app = express();
+  app.use(cors());
   app.use(express.json({ limit: "5mb" }));
 
   app.use("/boards", createBoardsRoute(data));
