@@ -53,7 +53,7 @@ export class BoardsRepository {
     return this.findById(id);
   }
 
-  public delete(id: string) {
+  public delete(id: string): boolean {
     const result = this.sql.insert(
       `DELETE FROM boards WHERE id = ?`,
       [id]

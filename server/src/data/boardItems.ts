@@ -79,6 +79,17 @@ export class BoardItemsRepository {
     return this.mapRecordToApiType(record);
   }
 
+  public delete(boardId: string, id: string): boolean {
+    const results = this.sql.insert(
+      `
+        DELETE FROM boardItems WHERE boardId = ? AND id = ?;
+      `,
+      [boardId, id],
+    );
+
+    return results.changes > 0;
+  }
+
   public create(input: CreateBoardItemInput) {
     const id = randomUUID();
     const now = new Date();

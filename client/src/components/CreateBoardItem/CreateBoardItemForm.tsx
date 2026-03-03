@@ -36,6 +36,7 @@ export const CreateItemForm: FunctionComponent<Props> = ({
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
@@ -64,6 +65,7 @@ export const CreateItemForm: FunctionComponent<Props> = ({
       }
 
       onCreate(json.boardItem);
+      reset();
     },
     [boardId],
   );
