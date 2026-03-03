@@ -1,5 +1,9 @@
-node_modules/
-output/
+.git
+bruno
+node_modules
 
-.env
-.gitignore
+client/dist
+
+server/client
+server/db
+server/dist

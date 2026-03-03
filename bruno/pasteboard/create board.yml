@@ -1,0 +1,26 @@
+info:
+  name: create board
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: http://localhost:8493/boards/create
+  body:
+    type: json
+    data: |-
+      {
+        "name": "{{boardName}}"
+      }
+  auth: inherit
+
+runtime:
+  variables:
+    - name: boardName
+      value: Test board
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

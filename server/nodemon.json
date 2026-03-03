@@ -1,0 +1,13 @@
+{
+  "verbose": true,
+  "restartable": "rs",
+  "ignore": ["node_modules/**", "dist/**"],
+  "watch": [
+    ".env",
+    "src/**/*"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "ts,tsx,js,jsx,json,html,graphql,css"
+}

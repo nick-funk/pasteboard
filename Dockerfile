@@ -1,18 +1,16 @@
-FROM node:14-alpine
+FROM node:24-alpine
 
-RUN apk --no-cache add git python3
+WORKDIR /app
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
-COPY . /usr/src/app
+COPY . ./
+RUN cd client && npm ci
+RUN cd server && npm ci
+RUN cd server && npm run build
 
-RUN chown -R node /usr/src/app
-USER node
+ENV HOST=0.0.0.0
+ENV PORT=8493
+EXPOSE 8493
 
-RUN npm ci && npm run build
+WORKDIR /app/server
 
-ENV NODE_ENV production
-ENV PORT 7000
-EXPOSE 7000
-
-CMD ["node", "output/server/main.js"]
+ENTRYPOINT [ "node", "dist/main.js" ]

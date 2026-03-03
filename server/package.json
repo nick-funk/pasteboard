@@ -1,0 +1,35 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:dev": "tsc --project tsconfig.json",
+    "start:dev": "npm run build:dev && node ./dist/main.js",
+    "dev": "NODE_ENV=development nodemon --exec \"npm run start:dev\"",
+    "clean:client": "rm -f -r ./client",
+    "build:client": "cd ../client && npm run build",
+    "copy:client": "cp -r ../client/dist ./client",
+    "package:client": "npm run clean:client && npm run build:client && npm run copy:client",
+    "build": "npm run package:client && tsc --project tsconfig.json",
+    "start": "npm run build && node ./dist/main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.3.3",
+    "nodemon": "^3.1.14",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "pino": "^10.3.1",
+    "zod": "^4.3.6"
+  }
+}
