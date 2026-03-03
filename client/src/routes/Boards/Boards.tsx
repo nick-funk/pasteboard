@@ -131,7 +131,7 @@ export const BoardsPage: FunctionComponent = () => {
 
   return (
     <>
-      <h1 className="title">Boards</h1>
+      <h1 className="is-size-3 mb-2">Boards</h1>
       {boards.map((b) => (
         <BoardItem key={b.id} board={b} onDelete={onDelete} />
       ))}

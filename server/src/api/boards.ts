@@ -12,6 +12,10 @@ const DeleteSchema = z.object({
   id: z.uuidv4().nonoptional(),
 });
 
+const GetSchema = z.object({
+  id: z.uuidv4().nonoptional(),
+});
+
 export const createBoardsRoute = (data: DataContext) => {
   const route = Router();
 
@@ -19,6 +23,29 @@ export const createBoardsRoute = (data: DataContext) => {
     return res.status(200).send({
       boards: data.boards.all(),
     });
+  });
+
+  route.get("/:id", (req, res) => {
+    try {
+      const payload = GetSchema.parse(req.params);
+
+      const existing = data.boards.findById(payload.id);
+      if (!existing) {
+        res.status(404).send({ message: BoardNotFound })
+      }
+
+      return res.status(200).send({
+        board: existing,
+      });
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        return res.status(400).send({
+          issues: err.issues,
+        });
+      }
+
+      return res.status(500).send({ message: SomethingBadHappened });
+    }
   });
 
   route.post("/create", (req, res) => {

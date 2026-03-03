@@ -64,7 +64,7 @@ export class BoardsRepository {
 
   public all(): Board[] {
     const results = this.sql.select(
-      `SELECT * FROM boards;`
+      `SELECT * FROM boards ORDER BY name ASC;`
     );
 
     return results.map((r) => r as unknown as Board);
