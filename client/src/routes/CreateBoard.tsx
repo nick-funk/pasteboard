@@ -4,8 +4,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import clsx from "clsx";
 
-import { Config } from "../config";
 import type { Board } from "../types";
+import { makeApiRequest } from "../request";
 
 interface FormValues {
   name: string;
@@ -38,12 +38,8 @@ export const CreateBoardPage: FunctionComponent = () => {
   const [message, setMessage] = useState<MessageState | null>(null);
 
   const onSubmit: SubmitHandler<FormValues> = useCallback(async (data) => {
-    const url = new URL("/api/boards/create", Config.serverUrl);
-    const response = await fetch(url, {
+    const response = await makeApiRequest("/api/boards/create", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
     });
 

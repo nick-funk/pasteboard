@@ -2,6 +2,8 @@ FROM node:24-alpine
 
 WORKDIR /app
 
+ENV VITE_SERVER_URL=/
+
 COPY . ./
 RUN cd client && npm ci
 RUN cd server && npm ci

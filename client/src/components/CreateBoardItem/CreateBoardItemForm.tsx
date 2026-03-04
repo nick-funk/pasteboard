@@ -5,9 +5,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import type { BoardItem } from "../../types";
-import { Config } from "../../config";
 
 import "./CreateBoardItemForm.css";
+import { makeApiRequest } from "../../request";
 
 interface FormValues {
   body: string;
@@ -36,19 +36,15 @@ export const CreateItemForm: FunctionComponent<Props> = ({
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
 
   const onSubmit: SubmitHandler<FormValues> = useCallback(
     async (data) => {
-      const url = new URL("/api/boardItems/create", Config.serverUrl);
-      const response = await fetch(url, {
+      const response = await makeApiRequest("/api/boardItems/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           ...data,
           boardId,

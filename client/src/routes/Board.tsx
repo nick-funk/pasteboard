@@ -1,8 +1,14 @@
-import { useCallback, useEffect, useState, type FunctionComponent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type FunctionComponent,
+} from "react";
 import { useParams } from "react-router-dom";
-import { Config } from "../config";
+
 import type { Board, BoardItem } from "../types";
 import { CreateItemForm } from "../components/CreateBoardItem/CreateBoardItemForm";
+import { makeApiRequest } from "../request";
 
 interface GetResponse {
   board?: Board | null;
@@ -25,23 +31,19 @@ interface ItemProps {
 
 export const Item: FunctionComponent<ItemProps> = ({ item, onDelete }) => {
   const handleDelete = useCallback(async () => {
-    const url = new URL("/api/boardItems/delete", Config.serverUrl);
-    const response = await fetch(url, {
+    const response = await makeApiRequest("/api/boardItems/delete", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
       body: JSON.stringify({
         boardId: item.boardId,
         id: item.id,
-      })
+      }),
     });
 
     if (!response.ok) {
       return;
     }
 
-    const json = await response.json() as DeleteResponse;
+    const json = (await response.json()) as DeleteResponse;
     if (!json || !json.success) {
       return;
     }
@@ -49,11 +51,13 @@ export const Item: FunctionComponent<ItemProps> = ({ item, onDelete }) => {
     onDelete(item.id);
   }, [item.id, item.boardId]);
 
-  return <div className="card p-2 is-flex is-flex-direction-row gap-1">
-    <textarea className="input" value={item.body} readOnly></textarea>
-    <button className="delete ml-2 mr-2" onClick={handleDelete}></button>
-  </div>
-}
+  return (
+    <div className="card p-2 is-flex is-flex-direction-row gap-1">
+      <textarea className="input" value={item.body} readOnly></textarea>
+      <button className="delete ml-2 mr-2" onClick={handleDelete}></button>
+    </div>
+  );
+};
 
 export const BoardPage: FunctionComponent = () => {
   const { id } = useParams();
@@ -62,8 +66,7 @@ export const BoardPage: FunctionComponent = () => {
   const [items, setItems] = useState<BoardItem[]>([]);
 
   const loadBoard = useCallback(async () => {
-    const url = new URL(`/api/boards/${id}`, Config.serverUrl);
-    const response = await fetch(url, {
+    const response = await makeApiRequest(`/api/boards/${id}`, {
       method: "GET",
     });
 
@@ -71,7 +74,7 @@ export const BoardPage: FunctionComponent = () => {
       return;
     }
 
-    const json = await response.json() as GetResponse;
+    const json = (await response.json()) as GetResponse;
     if (!json || !json.board) {
       return;
     }
@@ -80,8 +83,7 @@ export const BoardPage: FunctionComponent = () => {
   }, [id]);
 
   const loadItems = useCallback(async () => {
-    const url = new URL(`/api/boards/${id}/items`, Config.serverUrl);
-    const response = await fetch(url, {
+    const response = await makeApiRequest(`/api/boards/${id}/items`, {
       method: "GET",
     });
 
@@ -89,7 +91,7 @@ export const BoardPage: FunctionComponent = () => {
       return;
     }
 
-    const json = await response.json() as ItemsResponse;
+    const json = (await response.json()) as ItemsResponse;
     if (!json || !json.board || !json.items) {
       return;
     }
@@ -101,9 +103,12 @@ export const BoardPage: FunctionComponent = () => {
     setItems((items) => [item, ...items]);
   }, []);
 
-  const onDelete = useCallback((id: string) => {
-    setItems((items) => items.filter((i) => i.id !== id));
-  }, [setItems]);
+  const onDelete = useCallback(
+    (id: string) => {
+      setItems((items) => items.filter((i) => i.id !== id));
+    },
+    [setItems],
+  );
 
   useEffect(() => {
     loadBoard();
@@ -111,13 +116,17 @@ export const BoardPage: FunctionComponent = () => {
   }, [id]);
 
   if (!board || !id) {
-    return <>Loading...</>
+    return <>Loading...</>;
   }
 
-  return <div className="is-flex is-flex-direction-column">
-    <h1 className="is-size-3 mb-2">{board.name}</h1>
-    <CreateItemForm boardId={id} onCreate={onCreate} />
+  return (
+    <div className="is-flex is-flex-direction-column">
+      <h1 className="is-size-3 mb-2">{board.name}</h1>
+      <CreateItemForm boardId={id} onCreate={onCreate} />
 
-    {items.map((i) => <Item key={i.id} item={i} onDelete={onDelete} />)}
-  </div>
-}
+      {items.map((i) => (
+        <Item key={i.id} item={i} onDelete={onDelete} />
+      ))}
+    </div>
+  );
+};

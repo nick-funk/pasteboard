@@ -4,10 +4,10 @@ import {
   useState,
   type FunctionComponent,
 } from "react";
-import { Config } from "../../config";
 import type { Board } from "../../types";
 
 import "./Boards.css";
+import { makeApiRequest } from "../../request";
 
 interface BoardsResponse {
   boards: Board[];
@@ -32,12 +32,8 @@ export const BoardItem: FunctionComponent<BoardItemProps> = ({
   }, []);
 
   const handleDelete = useCallback(async () => {
-    const url = new URL("/api/boards/delete", Config.serverUrl);
-    const response = await fetch(url, {
+    const response = await makeApiRequest("/api/boards/delete", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ id: board.id }),
     });
 
@@ -107,8 +103,7 @@ export const BoardsPage: FunctionComponent = () => {
   const [boards, setBoards] = useState<Board[]>([]);
 
   const loadBoards = useCallback(async () => {
-    const url = new URL("/api/boards", Config.serverUrl);
-    const response = await fetch(url, { method: "GET" });
+    const response = await makeApiRequest("/api/boards", { method: "GET" });
     if (!response.ok) {
       return;
     }
